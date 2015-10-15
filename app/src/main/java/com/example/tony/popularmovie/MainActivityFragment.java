@@ -3,12 +3,16 @@ package com.example.tony.popularmovie;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -25,6 +29,12 @@ public class MainActivityFragment extends Fragment {
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(getActivity()));
+        gridview.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "position="+position, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return rootView;
     }
