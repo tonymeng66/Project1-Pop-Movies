@@ -8,6 +8,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by Tony on 2015/10/15.
  */
@@ -19,7 +21,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        return 10;
     }
 
     public Object getItem(int position) {
@@ -36,28 +38,11 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(0, 0, 0, 0);
         } else {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(mThumbIds[position]);
+        Picasso.with(mContext).load("http://i.imgur.com/DvpvklR.png").into(imageView);
         return imageView;
     }
-
-    // references to our images
-    private Integer[] mThumbIds = {
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8,
-            R.drawable.sample_8, R.drawable.sample_8
-    };
 }
