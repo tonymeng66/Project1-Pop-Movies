@@ -21,7 +21,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return 10;
+        return 6;
     }
 
     public Object getItem(int position) {
@@ -38,11 +38,17 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(0, 0, 0, 0);
         } else {
             imageView = (ImageView) convertView;
         }
 
-        Picasso.with(mContext).load("http://i.imgur.com/DvpvklR.png").into(imageView);
+        Picasso.with(mContext)
+                .load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
+                .resize(700,700)
+                .into(imageView);
         return imageView;
     }
 }
