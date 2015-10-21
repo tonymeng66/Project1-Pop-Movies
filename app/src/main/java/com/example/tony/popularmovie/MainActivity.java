@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             FetchMovieInfoTask movieTask = new FetchMovieInfoTask();
-            movieTask.execute();
+            movieTask.execute("popularity.desc");
         }
         if (id == R.id.action_settings) {
             return true;

@@ -1,5 +1,6 @@
 package com.example.tony.popularmovie;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,12 +14,12 @@ import java.net.URL;
 /**
  * Created by Tony on 2015/10/20.
  */
-public class FetchMovieInfoTask extends AsyncTask<Void,Void,Void>{
+public class FetchMovieInfoTask extends AsyncTask<String,Void,Void>{
 
     private final String LOG_TAG = FetchMovieInfoTask.class.getSimpleName();
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(String... params) {
         // Fetch data with API from TMdb
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -27,12 +28,15 @@ public class FetchMovieInfoTask extends AsyncTask<Void,Void,Void>{
         String forecastJsonStr = null;
 
         try {
-            //Construct the URL for the OpenWeatherMap query
-            //Possible parameters are available at OWM's forecast API page, at
-            //http://openweathermap.org/API#forecast
-            URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=829a2b250412b52d087fb34b2b9d64cb");
+            final String MovieBaseURL = "http://api.themoviedb.org/3/discover/movie?";
+            final String apiKey="829a2b250412b52d087fb34b2b9d64cb";
 
-            // Create the request to TMdb, and open the connection
+            Uri builtUri = Uri.parse(MovieBaseURL).buildUpon()
+                            .appendQueryParameter("sort_by",params[0])
+                            .appendQueryParameter("api_key",apiKey)
+                            .build();
+
+            URL url = new URL(builtUri.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
