@@ -4,6 +4,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,18 +18,47 @@ import java.net.URL;
 /**
  * Created by Tony on 2015/10/20.
  */
-public class FetchMovieInfoTask extends AsyncTask<String,Void,Void>{
+
+
+public class FetchMovieInfoTask extends AsyncTask<String,Void,String[]>{
 
     private final String LOG_TAG = FetchMovieInfoTask.class.getSimpleName();
 
+    private String[] getMovieInfoFromJSON(String movieJsonStr, int index) throws JSONException{
+
+        final String ARRAY = "results";
+
+        final String TITLE = "original_title";
+        final String RELEASE_DATE = "release_date";
+        final String MOVIE_POSTER = "poster_path";
+        final String VOTE_AVERAGE= "vote_average";
+        final String PLOT_SYNOPSIS = "overview";
+
+        String[] resultStr=new String[5];
+
+        JSONObject movieInfo = new JSONObject(movieJsonStr);
+
+        resultStr[0] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(TITLE);
+        resultStr[1] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(RELEASE_DATE);
+        resultStr[2] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(MOVIE_POSTER);
+        resultStr[3] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(VOTE_AVERAGE);
+        resultStr[4] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(PLOT_SYNOPSIS);
+
+        for(String s:resultStr){
+            Log.v(LOG_TAG,s);
+        }
+
+        return resultStr;
+    }
+
     @Override
-    protected Void doInBackground(String... params) {
+    protected String[] doInBackground(String... params) {
         // Fetch data with API from TMdb
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
         // Will contain the raw JSON response as a string.
-        String forecastJsonStr = null;
+        String movieJsonStr = null;
 
         try {
             final String MovieBaseURL = "http://api.themoviedb.org/3/discover/movie?";
@@ -47,7 +80,6 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void>{
 
             if (inputStream == null) {
                 // Nothing to do.
-                //forecastJsonStr = null;
                 return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -61,15 +93,15 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void>{
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
-                forecastJsonStr = null;
+                movieJsonStr = null;
             }
-            forecastJsonStr = buffer.toString();
-            Log.d(LOG_TAG,forecastJsonStr);
+            movieJsonStr = buffer.toString();
+            Log.d(LOG_TAG,movieJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
-            forecastJsonStr = null;
+            movieJsonStr = null;
         } finally{
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -81,6 +113,12 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void>{
                     Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
+        }
+
+        try{
+            return getMovieInfoFromJSON(movieJsonStr,0);
+        }catch(JSONException e){
+            Log.v(LOG_TAG,e.toString());
         }
 
         return null;
