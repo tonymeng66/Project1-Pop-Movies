@@ -12,6 +12,8 @@ import android.widget.ListAdapter;
 import com.squareup.picasso.Picasso;
 
 public class MoviePosterAdapter extends BaseAdapter {
+
+    final private String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
     private Context mContext;
 
     public MoviePosterAdapter(Context c) {
@@ -44,7 +46,7 @@ public class MoviePosterAdapter extends BaseAdapter {
         }
 
         Picasso.with(mContext)
-                .load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
+                .load(BASE_POSTER_PATH+"/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
                 .resize(450,700)
                 .into(imageView);
         return imageView;

@@ -15,16 +15,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by Tony on 2015/10/20.
- */
 
 
-public class FetchMovieInfoTask extends AsyncTask<String,Void,String[]>{
+public class FetchMovieInfoTask extends AsyncTask<String,Void,MovieInfo[]>{
 
     private final String LOG_TAG = FetchMovieInfoTask.class.getSimpleName();
 
-    private String[] getMovieInfoFromJSON(String movieJsonStr, int index) throws JSONException{
+    private MovieInfo[] getMovieInfoFromJSON(String movieJsonStr) throws JSONException{
 
         final String ARRAY = "results";
 
@@ -34,25 +31,34 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,String[]>{
         final String VOTE_AVERAGE= "vote_average";
         final String PLOT_SYNOPSIS = "overview";
 
-        String[] resultStr=new String[5];
+        MovieInfo[] movieInfo={
+            new MovieInfo(),
+            new MovieInfo(),
+            new MovieInfo(),
+            new MovieInfo(),
+            new MovieInfo(),
+            new MovieInfo()
+        };
 
-        JSONObject movieInfo = new JSONObject(movieJsonStr);
+        JSONObject movieInfoJSON = new JSONObject(movieJsonStr);
 
-        resultStr[0] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(TITLE);
-        resultStr[1] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(RELEASE_DATE);
-        resultStr[2] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(MOVIE_POSTER);
-        resultStr[3] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(VOTE_AVERAGE);
-        resultStr[4] = movieInfo.getJSONArray(ARRAY).getJSONObject(index).getString(PLOT_SYNOPSIS);
-
-        for(String s:resultStr){
-            Log.v(LOG_TAG,s);
+        for(int i=0;i<6;i++) {
+            movieInfo[i].setTitle(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TITLE));
+            movieInfo[i].setRelease_date(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(RELEASE_DATE));
+            movieInfo[i].setMovie_poster(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER));
+            movieInfo[i].setVote_average(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
+            movieInfo[i].setPlot_synopsis(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
         }
 
-        return resultStr;
+        for(MovieInfo m:movieInfo){
+            Log.v(LOG_TAG,m.getTitle());
+        }
+
+        return movieInfo;
     }
 
     @Override
-    protected String[] doInBackground(String... params) {
+    protected MovieInfo[] doInBackground(String... params) {
         // Fetch data with API from TMdb
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -116,7 +122,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,String[]>{
         }
 
         try{
-            return getMovieInfoFromJSON(movieJsonStr,0);
+            return getMovieInfoFromJSON(movieJsonStr);
         }catch(JSONException e){
             Log.v(LOG_TAG,e.toString());
         }
