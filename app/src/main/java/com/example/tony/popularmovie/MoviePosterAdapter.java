@@ -3,13 +3,13 @@ package com.example.tony.popularmovie;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 
 import com.squareup.picasso.Picasso;
-
 
 public class MoviePosterAdapter extends BaseAdapter {
     private Context mContext;
@@ -45,7 +45,7 @@ public class MoviePosterAdapter extends BaseAdapter {
 
         Picasso.with(mContext)
                 .load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
-                .resize(700,700)
+                .resize(450,700)
                 .into(imageView);
         return imageView;
     }
