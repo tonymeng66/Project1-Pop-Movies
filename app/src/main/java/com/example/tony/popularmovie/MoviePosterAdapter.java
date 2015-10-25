@@ -18,6 +18,7 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
 
     final private String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
     private Context mContext;
+    private String poster_path;
 
     public MoviePosterAdapter(Activity context, List<MovieInfo> movieInfo) {
         // Here, we initialize the ArrayAdapter's internal storage for the context and the list.
@@ -31,7 +32,9 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
+        MovieInfo movieInfo = getItem(position);
         ImageView imageView;
+
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
@@ -43,7 +46,7 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
         }
 
         Picasso.with(mContext)
-                .load(BASE_POSTER_PATH+"/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
+                .load(BASE_POSTER_PATH+movieInfo.getMovie_poster())
                 .resize(450,700)
                 .into(imageView);
         return imageView;
