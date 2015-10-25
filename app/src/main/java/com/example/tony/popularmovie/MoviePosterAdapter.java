@@ -10,13 +10,11 @@ import android.widget.ListAdapter;
 
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by Tony on 2015/10/15.
- */
-public class ImageAdapter extends BaseAdapter {
+
+public class MoviePosterAdapter extends BaseAdapter {
     private Context mContext;
 
-    public ImageAdapter(Context c) {
+    public MoviePosterAdapter(Context c) {
         mContext = c;
     }
 
