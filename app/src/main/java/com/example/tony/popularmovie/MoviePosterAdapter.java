@@ -18,18 +18,24 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
 
     final private String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
     private Context mContext;
-    private String poster_path;
 
     public MoviePosterAdapter(Activity context, List<MovieInfo> movieInfo) {
-        // Here, we initialize the ArrayAdapter's internal storage for the context and the list.
-        // the second argument is used when the ArrayAdapter is populating a single TextView.
-        // Because this is a custom adapter for two TextViews and an ImageView, the adapter is not
-        // going to use this second argument, so it can be any value. Here, we used 0.
         super(context, 0, movieInfo);
         mContext=context;
     }
 
+    @Override
+    public void clear() {
+        super.clear();
+    }
 
+    @Override
+    public void add(MovieInfo object) {
+        super.add(object);
+    }
+
+
+    @Override
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieInfo movieInfo = getItem(position);
@@ -47,7 +53,7 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
 
         Picasso.with(mContext)
                 .load(BASE_POSTER_PATH+movieInfo.getMovie_poster())
-                .resize(450,700)
+                .resize(450,600)
                 .into(imageView);
         return imageView;
     }
