@@ -53,7 +53,7 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
 
         Picasso.with(mContext)
                 .load(BASE_POSTER_PATH+movieInfo.getMovie_poster())
-                .resize(450,600)
+                .resize(360,600)
                 .into(imageView);
         return imageView;
     }

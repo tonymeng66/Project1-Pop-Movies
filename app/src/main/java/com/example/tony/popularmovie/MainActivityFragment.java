@@ -1,7 +1,9 @@
 package com.example.tony.popularmovie;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.SyncStateContract;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +40,19 @@ import java.util.List;
 
     public MainActivityFragment() {
     }
+    public void updateMovieInfo(){
+        FetchMovieInfoTask movieTask = new FetchMovieInfoTask();
+        movieTask.execute("popularity.desc");
+    }
+
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovieInfo();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +73,7 @@ import java.util.List;
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchMovieInfoTask movieTask = new FetchMovieInfoTask();
-            movieTask.execute("popularity.desc");
+            updateMovieInfo();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -77,7 +91,6 @@ import java.util.List;
                 new MovieInfo()
         };
 
-
         List list = Arrays.asList(movieInfo);
         List arrayList = new ArrayList(list);
         moviePosterAdapter = new MoviePosterAdapter(getActivity(), arrayList);
@@ -89,7 +102,9 @@ import java.util.List;
         gridview.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "position="+position, Toast.LENGTH_SHORT).show();
+                MovieInfo mInfo = (MovieInfo) parent.getItemAtPosition(position);
+                startActivity(new Intent(getActivity(), DetailActivity.class)
+                        .putExtra("mInfo",mInfo));
             }
         });
 
@@ -109,7 +124,7 @@ import java.util.List;
             final String VOTE_AVERAGE= "vote_average";
             final String PLOT_SYNOPSIS = "overview";
 
-            MovieInfo[] movieInfo={
+            MovieInfo[] movieInfo = {
                     new MovieInfo(),
                     new MovieInfo(),
                     new MovieInfo(),
@@ -212,7 +227,7 @@ import java.util.List;
             if (mInfo != null) {
                 moviePosterAdapter.clear();
                 for(MovieInfo m : mInfo) {
-                    moviePosterAdapter.add(m);
+                    moviePosterAdapter.addAll(m);
                     //Log.v(LOG_TAG,m.getMovie_poster());
                 }
             }

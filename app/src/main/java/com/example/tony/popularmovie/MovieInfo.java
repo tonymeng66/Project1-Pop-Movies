@@ -1,6 +1,9 @@
 package com.example.tony.popularmovie;
 
-public class MovieInfo {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class MovieInfo implements Parcelable{
 
     private String title;
     private String release_date;
@@ -9,12 +12,21 @@ public class MovieInfo {
     private String plot_synopsis;
 
     public MovieInfo (){
-        setTitle("test1");
-        setRelease_date("test2");
-        setMovie_poster("/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg");
-        setVote_average("test3");
-        setPlot_synopsis("test4");
+        setTitle("");
+        setRelease_date("");
+        setMovie_poster("");
+        setVote_average("");
+        setPlot_synopsis("");
     }
+    public MovieInfo(Parcel in)
+    {
+        title = in.readString();
+        release_date = in.readString();
+        movie_poster = in.readString();
+        vote_average = in.readString();
+        plot_synopsis = in.readString();
+    }
+
 
     public String getTitle() {
         return title;
@@ -55,4 +67,33 @@ public class MovieInfo {
     public void setPlot_synopsis(String plot_synopsis) {
         this.plot_synopsis = plot_synopsis;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(release_date);
+        dest.writeString(movie_poster);
+        dest.writeString(vote_average);
+        dest.writeString(plot_synopsis);
+    }
+    public static final Parcelable.Creator<MovieInfo> CREATOR = new Creator<MovieInfo>(){
+        @Override
+        public MovieInfo[] newArray(int size)
+        {
+            return new MovieInfo[size];
+        }
+
+        @Override
+        public MovieInfo createFromParcel(Parcel in)
+        {
+            return new MovieInfo(in);
+        }
+
+    };
+
 }
