@@ -1,12 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_refresh"
-        android:title="@string/action_refresh"
+    <item android:id="@+id/sortby_pop"
+        android:title="@string/sortby_pop"
         android:orderInCategory="1"
         app:showAsAction="never" />
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/sortby_rate"
+        android:title="@string/sortby_rate"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>

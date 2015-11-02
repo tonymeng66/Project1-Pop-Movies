@@ -31,27 +31,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
     public class MainActivityFragment extends Fragment {
 
     private MoviePosterAdapter moviePosterAdapter;
 
-    public MainActivityFragment() {
+    private String sortby="popularity.desc";
+
+    private MovieInfo[] movieInfo = {
+            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
+            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
+            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
+            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo()
+    };
+
+        public MainActivityFragment() {
     }
-    public void updateMovieInfo(){
+
+    public void setSortby(String sortby) {
+        this.sortby = sortby;
+    }
+
+        public void updateMovieInfo(String sortby){
         FetchMovieInfoTask movieTask = new FetchMovieInfoTask();
-        movieTask.execute("popularity.desc");
+        movieTask.execute(sortby);
     }
-
-
-
 
     @Override
     public void onStart() {
         super.onStart();
-        updateMovieInfo();
+        updateMovieInfo(sortby);
     }
 
     @Override
@@ -72,8 +80,14 @@ import java.util.List;
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateMovieInfo();
+        if (id == R.id.sortby_pop) {
+            setSortby("popularity.desc");
+            updateMovieInfo("popularity.desc");
+            return true;
+        }
+        if (id == R.id.sortby_rate) {
+            setSortby("vote_average.desc");
+            updateMovieInfo("vote_average.desc");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -81,15 +95,6 @@ import java.util.List;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-
-        MovieInfo[] movieInfo = {
-                new MovieInfo(),
-                new MovieInfo(),
-                new MovieInfo(),
-                new MovieInfo(),
-                new MovieInfo(),
-                new MovieInfo()
-        };
 
         List list = Arrays.asList(movieInfo);
         List arrayList = new ArrayList(list);
@@ -117,34 +122,23 @@ import java.util.List;
         private MovieInfo[] getMovieInfoFromJSON(String movieJsonStr) throws JSONException {
 
             final String ARRAY = "results";
-
+            final String ID = "id";
             final String TITLE = "original_title";
             final String RELEASE_DATE = "release_date";
             final String MOVIE_POSTER = "poster_path";
             final String VOTE_AVERAGE= "vote_average";
             final String PLOT_SYNOPSIS = "overview";
-
-            MovieInfo[] movieInfo = {
-                    new MovieInfo(),
-                    new MovieInfo(),
-                    new MovieInfo(),
-                    new MovieInfo(),
-                    new MovieInfo(),
-                    new MovieInfo()
-            };
+            final String RUNTIME = "runtime";
 
             JSONObject movieInfoJSON = new JSONObject(movieJsonStr);
 
-            for(int i=0;i<6;i++) {
+            for(int i=0;i<movieInfo.length;i++) {
                 movieInfo[i].setTitle(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TITLE));
+                movieInfo[i].setId(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(ID));
                 movieInfo[i].setRelease_date(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(RELEASE_DATE));
                 movieInfo[i].setMovie_poster(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER));
                 movieInfo[i].setVote_average(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
                 movieInfo[i].setPlot_synopsis(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
-            }
-
-            for(MovieInfo m:movieInfo){
-                Log.v(LOG_TAG, m.getTitle());
             }
 
             return movieInfo;
@@ -160,7 +154,7 @@ import java.util.List;
             String movieJsonStr = null;
 
             try {
-                final String MovieBaseURL = "http://api.themoviedb.org/3/discover/movie?";
+                final String MovieBaseURL = "http://api.themoviedb.org/3/discover/movie";
                 final String apiKey="829a2b250412b52d087fb34b2b9d64cb";
 
                 Uri builtUri = Uri.parse(MovieBaseURL).buildUpon()
@@ -195,7 +189,6 @@ import java.util.List;
                     movieJsonStr = null;
                 }
                 movieJsonStr = buffer.toString();
-                Log.d(LOG_TAG,movieJsonStr);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
@@ -228,7 +221,6 @@ import java.util.List;
                 moviePosterAdapter.clear();
                 for(MovieInfo m : mInfo) {
                     moviePosterAdapter.addAll(m);
-                    //Log.v(LOG_TAG,m.getMovie_poster());
                 }
             }
         }

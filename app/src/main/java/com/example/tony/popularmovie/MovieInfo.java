@@ -6,25 +6,31 @@ import android.os.Parcelable;
 public class MovieInfo implements Parcelable{
 
     private String title;
+    private String id;
     private String release_date;
     private String movie_poster;
     private String vote_average;
     private String plot_synopsis;
+    private String run_time;
 
     public MovieInfo (){
         setTitle("");
+        setId("");
         setRelease_date("");
         setMovie_poster("");
         setVote_average("");
         setPlot_synopsis("");
+        setRun_time("");
     }
     public MovieInfo(Parcel in)
     {
         title = in.readString();
+        id = in.readString();
         release_date = in.readString();
         movie_poster = in.readString();
         vote_average = in.readString();
         plot_synopsis = in.readString();
+        run_time = in.readString();
     }
 
 
@@ -35,6 +41,10 @@ public class MovieInfo implements Parcelable{
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getId() {        return id;    }
+
+    public void setId(String id) {        this.id = id;    }
 
     public String getRelease_date() {
         return release_date;
@@ -68,6 +78,10 @@ public class MovieInfo implements Parcelable{
         this.plot_synopsis = plot_synopsis;
     }
 
+    public String getRun_time() {        return run_time;    }
+
+    public void setRun_time(String run_time) {        this.run_time = run_time;    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -76,10 +90,12 @@ public class MovieInfo implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
+        dest.writeString(id);
         dest.writeString(release_date);
         dest.writeString(movie_poster);
         dest.writeString(vote_average);
         dest.writeString(plot_synopsis);
+        dest.writeString(run_time);
     }
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Creator<MovieInfo>(){
         @Override
