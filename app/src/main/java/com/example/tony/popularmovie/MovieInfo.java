@@ -26,13 +26,13 @@ import android.os.Parcelable;
 
 public class MovieInfo implements Parcelable{
 
-    private String title;
-    private String id;
-    private String release_date;
-    private String movie_poster;
-    private String vote_average;
-    private String plot_synopsis;
-    private String run_time;
+    private String mTitle;
+    private String mId;
+    private String mRelease_date;
+    private String mMovie_poster;
+    private String mVote_average;
+    private String mPlot_synopsis;
+    private String mRun_time;
 
     public MovieInfo (){
         setTitle("");
@@ -45,63 +45,63 @@ public class MovieInfo implements Parcelable{
     }
     public MovieInfo(Parcel in)
     {
-        title = in.readString();
-        id = in.readString();
-        release_date = in.readString();
-        movie_poster = in.readString();
-        vote_average = in.readString();
-        plot_synopsis = in.readString();
-        run_time = in.readString();
+        mTitle = in.readString();
+        mId = in.readString();
+        mRelease_date = in.readString();
+        mMovie_poster = in.readString();
+        mVote_average = in.readString();
+        mPlot_synopsis = in.readString();
+        mRun_time = in.readString();
     }
 
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
-    public String getId() {        return id;    }
+    public String getId() {        return mId;    }
 
-    public void setId(String id) {        this.id = id;    }
+    public void setId(String id) {        this.mId = id;    }
 
     public String getRelease_date() {
-        return release_date;
+        return mRelease_date;
     }
 
     public void setRelease_date(String release_date) {
-        this.release_date = release_date;
+        this.mRelease_date = release_date;
     }
 
     public String getMovie_poster() {
-        return movie_poster;
+        return mMovie_poster;
     }
 
     public void setMovie_poster(String movie_poster) {
-        this.movie_poster = movie_poster;
+        this.mMovie_poster = movie_poster;
     }
 
     public String getVote_average() {
-        return vote_average;
+        return mVote_average;
     }
 
     public void setVote_average(String vote_average) {
-        this.vote_average = vote_average;
+        this.mVote_average = vote_average;
     }
 
     public String getPlot_synopsis() {
-        return plot_synopsis;
+        return mPlot_synopsis;
     }
 
     public void setPlot_synopsis(String plot_synopsis) {
-        this.plot_synopsis = plot_synopsis;
+        this.mPlot_synopsis = plot_synopsis;
     }
 
-    public String getRun_time() {        return run_time;    }
+    public String getRun_time() {        return mRun_time;    }
 
-    public void setRun_time(String run_time) {        this.run_time = run_time;    }
+    public void setRun_time(String run_time) {        this.mRun_time = run_time;    }
 
     @Override
     public int describeContents() {
@@ -110,13 +110,13 @@ public class MovieInfo implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeString(id);
-        dest.writeString(release_date);
-        dest.writeString(movie_poster);
-        dest.writeString(vote_average);
-        dest.writeString(plot_synopsis);
-        dest.writeString(run_time);
+        dest.writeString(mTitle);
+        dest.writeString(mId);
+        dest.writeString(mRelease_date);
+        dest.writeString(mMovie_poster);
+        dest.writeString(mVote_average);
+        dest.writeString(mPlot_synopsis);
+        dest.writeString(mRun_time);
     }
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Creator<MovieInfo>(){
         @Override

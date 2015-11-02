@@ -19,7 +19,6 @@ package com.example.tony.popularmovie;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.SyncStateContract;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +31,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,12 +51,12 @@ import java.util.List;
 
     public class MainActivityFragment extends Fragment {
 
-    private MoviePosterAdapter moviePosterAdapter;
+    private MoviePosterAdapter mMoviePosterAdapter;
 
-    private String sortby="popularity.desc";
+    private String mSortby ="popularity.desc";
 
     // TODO: work around for getting null pointer error
-    private MovieInfo[] movieInfo = {
+    private MovieInfo[] mMovieInfo = {
             new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
             new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
             new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
@@ -68,8 +66,8 @@ import java.util.List;
         public MainActivityFragment() {
     }
 
-    public void setSortby(String sortby) {
-        this.sortby = sortby;
+    public void setmSortby(String mSortby) {
+        this.mSortby = mSortby;
     }
 
         public void updateMovieInfo(String sortby){
@@ -80,7 +78,7 @@ import java.util.List;
     @Override
     public void onStart() {
         super.onStart();
-        updateMovieInfo(sortby);
+        updateMovieInfo(mSortby);
     }
 
     @Override
@@ -102,12 +100,12 @@ import java.util.List;
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.sortby_pop) {
-            setSortby("popularity.desc");
+            setmSortby("popularity.desc");
             updateMovieInfo("popularity.desc");
             return true;
         }
         if (id == R.id.sortby_rate) {
-            setSortby("vote_average.desc");
+            setmSortby("vote_average.desc");
             updateMovieInfo("vote_average.desc");
             return true;
         }
@@ -117,14 +115,14 @@ import java.util.List;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
-        List list = Arrays.asList(movieInfo);
+        List list = Arrays.asList(mMovieInfo);
         List arrayList = new ArrayList(list);
-        moviePosterAdapter = new MoviePosterAdapter(getActivity(), arrayList);
+        mMoviePosterAdapter = new MoviePosterAdapter(getActivity(), arrayList);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
-        gridview.setAdapter(moviePosterAdapter);
+        gridview.setAdapter(mMoviePosterAdapter);
         gridview.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -156,16 +154,16 @@ import java.util.List;
 
             JSONObject movieInfoJSON = new JSONObject(movieJsonStr);
 
-            for(int i=0;i<movieInfo.length;i++) {
-                movieInfo[i].setTitle(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TITLE));
-                movieInfo[i].setId(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(ID));
-                movieInfo[i].setRelease_date(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(RELEASE_DATE));
-                movieInfo[i].setMovie_poster(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER));
-                movieInfo[i].setVote_average(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
-                movieInfo[i].setPlot_synopsis(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
+            for(int i=0;i< mMovieInfo.length;i++) {
+                mMovieInfo[i].setTitle(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TITLE));
+                mMovieInfo[i].setId(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(ID));
+                mMovieInfo[i].setRelease_date(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(RELEASE_DATE));
+                mMovieInfo[i].setMovie_poster(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER));
+                mMovieInfo[i].setVote_average(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
+                mMovieInfo[i].setPlot_synopsis(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
             }
 
-            return movieInfo;
+            return mMovieInfo;
         }
 
         @Override
@@ -178,12 +176,12 @@ import java.util.List;
             String movieJsonStr = null;
 
             try {
-                final String MovieBaseURL = "http://api.themoviedb.org/3/discover/movie";
-                final String apiKey="829a2b250412b52d087fb34b2b9d64cb";
+                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
+                final String APIKEY ="829a2b250412b52d087fb34b2b9d64cb";
 
-                Uri builtUri = Uri.parse(MovieBaseURL).buildUpon()
+                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter("sort_by",params[0])
-                        .appendQueryParameter("api_key",apiKey)
+                        .appendQueryParameter("api_key", APIKEY)
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -242,9 +240,9 @@ import java.util.List;
         @Override
         protected void onPostExecute(MovieInfo[] mInfo) {
             if (mInfo != null) {
-                moviePosterAdapter.clear();
+                mMoviePosterAdapter.clear();
                 for(MovieInfo m : mInfo) {
-                    moviePosterAdapter.addAll(m);
+                    mMoviePosterAdapter.addAll(m);
                 }
             }
         }
