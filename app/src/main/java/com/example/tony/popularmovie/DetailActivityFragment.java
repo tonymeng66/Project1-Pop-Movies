@@ -50,7 +50,9 @@ public class DetailActivityFragment extends Fragment {
 
     public DetailActivityFragment() {
     }
-
+    /**
+     * Receive meta data and update the detail page content
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

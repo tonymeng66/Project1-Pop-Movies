@@ -49,7 +49,6 @@ import java.util.List;
 
 /**
  * Populate the main page with an GridView which is filled by movie posters.
- * Fetch movie information from "TheMovieDB" and parse it in the background , then pass it to the MoviePosterAdapter to update the main page.
  */
 
     public class MainActivityFragment extends Fragment {
@@ -58,6 +57,7 @@ import java.util.List;
 
     private String sortby="popularity.desc";
 
+    // TODO: work around for getting null pointer error
     private MovieInfo[] movieInfo = {
             new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
             new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
@@ -136,6 +136,9 @@ import java.util.List;
 
         return rootView;
     }
+    /**
+     * Fetch movie information from "TheMovieDB" and parse it in the background , then pass it to the MoviePosterAdapter to update the main page.
+     */
     public class FetchMovieInfoTask extends AsyncTask<String,Void,MovieInfo[]> {
 
         private final String LOG_TAG = FetchMovieInfoTask.class.getSimpleName();
