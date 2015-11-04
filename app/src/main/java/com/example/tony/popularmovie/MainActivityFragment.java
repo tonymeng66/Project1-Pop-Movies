@@ -177,7 +177,7 @@ import java.util.List;
 
             try {
                 final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
-                final String APIKEY ="";
+                final String APIKEY ="829a2b250412b52d087fb34b2b9d64cb";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter("sort_by",params[0])
