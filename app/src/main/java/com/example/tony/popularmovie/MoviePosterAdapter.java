@@ -64,16 +64,15 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setPadding(0, 0, 0, 0);
         } else {
             imageView = (ImageView) convertView;
         }
 
         Picasso.with(mContext)
-                .load(BASE_POSTER_PATH+movieInfo.getMovie_poster())
-                .resize(360,600)
+                .load(BASE_POSTER_PATH + movieInfo.getMovie_poster())
                 .into(imageView);
         return imageView;
     }
