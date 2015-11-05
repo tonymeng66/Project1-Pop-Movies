@@ -45,17 +45,6 @@ public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
     }
 
     @Override
-    public void clear() {
-        super.clear();
-    }
-
-    @Override
-    public void add(MovieInfo object) {
-        super.add(object);
-    }
-
-
-    @Override
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieInfo movieInfo = getItem(position);

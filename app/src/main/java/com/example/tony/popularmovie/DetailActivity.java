@@ -31,7 +31,9 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 }
