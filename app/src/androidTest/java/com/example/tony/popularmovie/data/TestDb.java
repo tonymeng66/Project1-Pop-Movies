@@ -98,26 +98,24 @@ public class TestDb extends AndroidTestCase {
         db.close();
     }
 
-    
-    /*
-    public void testLocationTable() {
+    public void testMovieDetailTable() {
 
         // First step: Get reference to writable database
         // If there's an error in those massive SQL table creation Strings,
         // errors will be thrown here when you try to get a writable database.
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Second Step: Create ContentValues of what you want to insert
         // (you can use the createNorthPoleLocationValues if you wish)
-        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
+        ContentValues testValues = TestUtilities.createFightClubMovieValues();
 
         // Third Step: Insert ContentValues into database and get a row ID back
-        long locationRowId;
-        locationRowId = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, testValues);
+        long movieRowId;
+        movieRowId = db.insert(MovieContract.MovieDetailEntry.TABLE_NAME, null, testValues);
 
         // Verify we got a row back.
-        assertTrue(locationRowId != -1);
+        assertTrue(movieRowId != -1);
 
         // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
         // the round trip.
@@ -125,7 +123,7 @@ public class TestDb extends AndroidTestCase {
         // Fourth Step: Query the database and receive a Cursor back
         // A cursor is your primary interface to the query results.
         Cursor cursor = db.query(
-                WeatherContract.LocationEntry.TABLE_NAME,  // Table to Query
+                MovieContract.MovieDetailEntry.TABLE_NAME,  // Table to Query
                 null, // all columns
                 null, // Columns for the "where" clause
                 null, // Values for the "where" clause
@@ -151,7 +149,7 @@ public class TestDb extends AndroidTestCase {
         // Sixth Step: Close Cursor and Database
         cursor.close();
         db.close();
-    }*/
+    }
 
     /*
         Students:  Here is where you will build code to test that we can insert and query the

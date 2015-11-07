@@ -41,7 +41,6 @@ public class MovieContract {
         public static final String TABLE_NAME = "movie_detail";
         // The movie_id setting string is what will be sent to openweathermap
         // as the location query.
-        public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_RUNTIME = "runtime";
         public static final String COLUMN_VIDEO = "video";
         public static final String COLUMN_REVIEW = "review";
