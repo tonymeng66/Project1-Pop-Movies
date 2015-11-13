@@ -47,15 +47,15 @@ public class TestUtilities extends AndroidTestCase {
         Students: Use this to create some default weather values for your database tests.
      */
     static ContentValues createDiscoverValues() {
-        ContentValues weatherValues = new ContentValues();
-        weatherValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, "550");
-        weatherValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_TITLE, "Fight Club");
-        weatherValues.put(MovieContract.DiscoverEntry.COLUMN_RELEASE_DATE, "2015-11-7");
-        weatherValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_POSTER, "fightclubposterpath.png");
-        weatherValues.put(MovieContract.DiscoverEntry.COLUMN_VOTE_AVERAGE, "5.0");
-        weatherValues.put(MovieContract.DiscoverEntry.COLUMN_PLOT_SYNOPSYS, "it's a movie about street fight");
+        ContentValues testValues = new ContentValues();
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, "550");
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_TITLE, "Fight Club");
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_RELEASE_DATE, "2015-11-7");
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_POSTER, "fightclubposterpath.png");
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_VOTE_AVERAGE, "5.0");
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_PLOT_SYNOPSYS, "it's a movie about street fight");
 
-        return weatherValues;
+        return testValues;
     }
 
     /*
@@ -76,6 +76,7 @@ public class TestUtilities extends AndroidTestCase {
         Students: You can uncomment this function once you have finished creating the
         LocationEntry part of the WeatherContract as well as the WeatherDbHelper.
      */
+    /*
     static long insertFightClubMovieValues(Context context) {
         // insert our test records into the database
         MovieDbHelper dbHelper = new MovieDbHelper(context);
@@ -90,7 +91,7 @@ public class TestUtilities extends AndroidTestCase {
 
         return movieRowId;
     }
-
+    */
     /*
         Students: The functions we provide inside of TestProvider use this utility class to test
         the ContentObserver callbacks using the PollingCheck class that we grabbed from the Android
