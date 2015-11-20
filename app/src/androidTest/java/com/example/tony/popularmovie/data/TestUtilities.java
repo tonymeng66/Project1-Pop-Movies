@@ -65,6 +65,7 @@ public class TestUtilities extends AndroidTestCase {
     static ContentValues createFightClubMovieValues() {
         // Create a new map of values, where column names are the keys
         ContentValues testValues = new ContentValues();
+        testValues.put(MovieContract.MovieDetailEntry.COLUMN_MOVIE_ID, "550");
         testValues.put(MovieContract.MovieDetailEntry.COLUMN_RUNTIME, "200");
         testValues.put(MovieContract.MovieDetailEntry.COLUMN_VIDEO, "fightclubvideopath.mp4");
         testValues.put(MovieContract.MovieDetailEntry.COLUMN_REVIEW, "i love this movie");

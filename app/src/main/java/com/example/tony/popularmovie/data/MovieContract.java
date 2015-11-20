@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package com.example.tony.popularmovie.data;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.Time;
 
@@ -23,32 +26,56 @@ import android.text.format.Time;
  */
 public class MovieContract {
 
-    // To make it easy to query for the exact date, we normalize all dates that go into
-    // the database to the start of the the Julian day at UTC.
-    /*public static long normalizeDate(long startDate) {
-        // normalize the start date to the beginning of the (UTC) day
-        Time time = new Time();
-        time.set(startDate);
-        int julianDay = Time.getJulianDay(startDate, time.gmtoff);
-        return time.setJulianDay(julianDay);
-    }*/
+    public static final String CONTENT_AUTHORITY = "com.example.tony.popularmovie.app";
 
-    /*
-        Inner class that defines the contents of the movie_detail table
-     */
+    // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
+    // the content provider.
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
+    public static final String PATH_DISCOVER = "discover";
+    public static final String PATH_MOVIE_DETAIL = "movie_detail";
+
+    //Inner class that defines the contents of the movie_detail table
     public static final class MovieDetailEntry implements BaseColumns {
 
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE_DETAIL).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE_DETAIL;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE_DETAIL;
+        // Table name
         public static final String TABLE_NAME = "movie_detail";
         // The movie_id setting string is what will be sent to openweathermap
         // as the location query.
+        public static final String COLUMN_MOVIE_ID = "moive_id";
         public static final String COLUMN_RUNTIME = "runtime";
         public static final String COLUMN_VIDEO = "video";
         public static final String COLUMN_REVIEW = "review";
+
+
+        public static String getMovieIDFromUri(Uri uri) {
+            return uri.getPathSegments().get(2);
+        }
+
+        public static Uri buildMovieDetailUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     /* Inner class that defines the contents of the dicovery table */
     public static final class DiscoverEntry implements BaseColumns {
 
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_DISCOVER).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DISCOVER;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_DISCOVER;
+
+        // Table name
         public static final String TABLE_NAME = "discover";
 
         // Column with the foreign key into the MovieDetail table.
@@ -63,5 +90,13 @@ public class MovieContract {
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 
         public static final String COLUMN_PLOT_SYNOPSYS = "overview";
+
+        public static String getRankFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static Uri buildDiscoverUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // movie_detail setting, the movie_id, and the trailer and review
         final String SQL_CREATE_MOVIE_DETAIL_TABLE = "CREATE TABLE " + MovieDetailEntry.TABLE_NAME + " (" +
                 MovieDetailEntry._ID + " TEXT PRIMARY KEY," +
+                MovieDetailEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
                 MovieDetailEntry.COLUMN_RUNTIME + " TEXT NOT NULL, " +
                 MovieDetailEntry.COLUMN_VIDEO + " TEXT NOT NULL, " +
                 MovieDetailEntry.COLUMN_REVIEW + " TEXT NOT NULL " +
@@ -58,7 +59,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 DiscoverEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie_detail table.
                 " FOREIGN KEY (" + DiscoverEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
-                MovieDetailEntry.TABLE_NAME + " (" + MovieDetailEntry._ID + ")"+")";
+                MovieDetailEntry.TABLE_NAME + " (" + MovieDetailEntry.COLUMN_MOVIE_ID + ")"+")";
 
 
 

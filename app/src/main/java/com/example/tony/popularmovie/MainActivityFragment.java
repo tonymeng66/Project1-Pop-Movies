@@ -70,7 +70,7 @@ import java.util.List;
         this.mSortby = mSortby;
     }
 
-        public void updateMovieInfo(String sortby){
+    public void updateMovieInfo(String sortby){
         FetchMovieInfoTask movieTask = new FetchMovieInfoTask();
         movieTask.execute(sortby);
     }
