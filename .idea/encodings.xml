@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/tony/popularmovie/FullTestSuite.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/tony/popularmovie/data/TestDb.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/tony/popularmovie/data/TestUriMatcher.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/tony/popularmovie/data/TestUtilities.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/tony/popularmovie/utils/PollingCheck.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/data/MovieContract.java" charset="GBK" />
