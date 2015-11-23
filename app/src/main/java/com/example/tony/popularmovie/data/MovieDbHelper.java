@@ -41,7 +41,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // Create a table to hold movie_detail consists of the string supplied in the
         // movie_detail setting, the movie_id, and the trailer and review
         final String SQL_CREATE_MOVIE_DETAIL_TABLE = "CREATE TABLE " + MovieDetailEntry.TABLE_NAME + " (" +
-                MovieDetailEntry._ID + " TEXT PRIMARY KEY," +
+                MovieDetailEntry._ID + " INTEGER PRIMARY KEY," +
                 MovieDetailEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
                 MovieDetailEntry.COLUMN_RUNTIME + " TEXT NOT NULL, " +
                 MovieDetailEntry.COLUMN_VIDEO + " TEXT NOT NULL, " +
@@ -59,7 +59,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 DiscoverEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie_detail table.
                 " FOREIGN KEY (" + DiscoverEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
-                MovieDetailEntry.TABLE_NAME + " (" + MovieDetailEntry.COLUMN_MOVIE_ID + ")"+")";
+                MovieDetailEntry.TABLE_NAME + " (" + MovieDetailEntry.COLUMN_MOVIE_ID + ")"+");";
 
 
 
