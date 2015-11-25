@@ -32,7 +32,7 @@ public class MovieInfo implements Parcelable{
     private String mMovie_poster;
     private String mVote_average;
     private String mPlot_synopsis;
-    private String mRun_time;
+    private String mPopularity;
 
     public MovieInfo (){
         setTitle("");
@@ -41,7 +41,7 @@ public class MovieInfo implements Parcelable{
         setMovie_poster("");
         setVote_average("");
         setPlot_synopsis("");
-        setRun_time("");
+        setmPopularity("");
     }
     public MovieInfo(Parcel in)
     {
@@ -51,17 +51,13 @@ public class MovieInfo implements Parcelable{
         mMovie_poster = in.readString();
         mVote_average = in.readString();
         mPlot_synopsis = in.readString();
-        mRun_time = in.readString();
+        mPopularity = in.readString();
     }
 
 
-    public String getTitle() {
-        return mTitle;
-    }
+    public String getTitle() {        return mTitle;    }
 
-    public void setTitle(String title) {
-        this.mTitle = title;
-    }
+    public void setTitle(String title) {        this.mTitle = title;    }
 
     public String getId() {        return mId;    }
 
@@ -91,17 +87,13 @@ public class MovieInfo implements Parcelable{
         this.mVote_average = vote_average;
     }
 
-    public String getPlot_synopsis() {
-        return mPlot_synopsis;
-    }
+    public String getPlot_synopsis() {        return mPlot_synopsis;    }
 
-    public void setPlot_synopsis(String plot_synopsis) {
-        this.mPlot_synopsis = plot_synopsis;
-    }
+    public void setPlot_synopsis(String plot_synopsis) {        this.mPlot_synopsis = plot_synopsis;    }
 
-    public String getRun_time() {        return mRun_time;    }
+    public String getmPopularity() {        return mPopularity;    }
 
-    public void setRun_time(String run_time) {        this.mRun_time = run_time;    }
+    public void setmPopularity(String mPopularity) {        this.mPopularity = mPopularity;    }
 
     @Override
     public int describeContents() {
@@ -116,7 +108,7 @@ public class MovieInfo implements Parcelable{
         dest.writeString(mMovie_poster);
         dest.writeString(mVote_average);
         dest.writeString(mPlot_synopsis);
-        dest.writeString(mRun_time);
+        dest.writeString(mPopularity);
     }
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Creator<MovieInfo>(){
         @Override

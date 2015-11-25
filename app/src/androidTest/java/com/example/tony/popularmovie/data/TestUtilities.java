@@ -51,6 +51,8 @@ public class TestUtilities extends AndroidTestCase {
         testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_POSTER, "fightclubposterpath.png");
         testValues.put(MovieContract.DiscoverEntry.COLUMN_VOTE_AVERAGE, "5.0");
         testValues.put(MovieContract.DiscoverEntry.COLUMN_PLOT_SYNOPSYS, "it's a movie about street fight");
+        testValues.put(MovieContract.DiscoverEntry.COLUMN_POPULARITY, "7.8");
+
 
         return testValues;
     }

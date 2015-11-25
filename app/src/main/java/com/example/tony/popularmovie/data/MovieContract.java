@@ -95,6 +95,9 @@ public class MovieContract {
 
         public static final String COLUMN_PLOT_SYNOPSYS = "overview";
 
+        public static final String COLUMN_POPULARITY = "popularity";
+
+
         public static String getRankFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }

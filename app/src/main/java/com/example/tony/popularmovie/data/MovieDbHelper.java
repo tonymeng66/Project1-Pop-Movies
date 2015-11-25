@@ -57,6 +57,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 DiscoverEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
                 DiscoverEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
                 DiscoverEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
+                DiscoverEntry.COLUMN_POPULARITY + " TEXT NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie_detail table.
                 " FOREIGN KEY (" + DiscoverEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieDetailEntry.TABLE_NAME + " (" + MovieDetailEntry.COLUMN_MOVIE_ID + ")"+");";

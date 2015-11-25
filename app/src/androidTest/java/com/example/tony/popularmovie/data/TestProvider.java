@@ -389,6 +389,7 @@ public class TestProvider extends AndroidTestCase {
             testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_POSTER, "fightclubposterpath"+Integer.toString(i)+".png");
             testValues.put(MovieContract.DiscoverEntry.COLUMN_VOTE_AVERAGE, "5."+Integer.toString(i));
             testValues.put(MovieContract.DiscoverEntry.COLUMN_PLOT_SYNOPSYS, "it's a movie about "+Integer.toString(i)+" men fighting");
+            testValues.put(MovieContract.DiscoverEntry.COLUMN_POPULARITY, "8."+Integer.toString(i));
             returnContentValues[i] = testValues;
         }
         return returnContentValues;

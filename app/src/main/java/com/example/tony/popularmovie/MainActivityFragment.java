@@ -16,7 +16,10 @@
 
 package com.example.tony.popularmovie;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -31,6 +34,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+
+import com.example.tony.popularmovie.data.MovieContract;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,14 +59,6 @@ import java.util.List;
     private MoviePosterAdapter mMoviePosterAdapter;
 
     private String mSortby ="popularity.desc";
-
-    // TODO: work around for getting null pointer error
-    private MovieInfo[] mMovieInfo = {
-            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
-            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
-            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),
-            new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo(),new MovieInfo()
-    };
 
         public MainActivityFragment() {
     }
@@ -133,120 +130,6 @@ import java.util.List;
         });
 
         return rootView;
-    }
-    /**
-     * Fetch movie information from "TheMovieDB" and parse it in the background , then pass it to the MoviePosterAdapter to update the main page.
-     */
-    public class FetchMovieInfoTask extends AsyncTask<String,Void,MovieInfo[]> {
-
-        private final String LOG_TAG = FetchMovieInfoTask.class.getSimpleName();
-
-        private MovieInfo[] getMovieInfoFromJSON(String movieJsonStr) throws JSONException {
-
-            final String ARRAY = "results";
-            final String ID = "id";
-            final String TITLE = "original_title";
-            final String RELEASE_DATE = "release_date";
-            final String MOVIE_POSTER = "poster_path";
-            final String VOTE_AVERAGE= "vote_average";
-            final String PLOT_SYNOPSIS = "overview";
-            final String RUNTIME = "runtime";
-
-            JSONObject movieInfoJSON = new JSONObject(movieJsonStr);
-
-            for(int i=0;i< mMovieInfo.length;i++) {
-                mMovieInfo[i].setTitle(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TITLE));
-                mMovieInfo[i].setId(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(ID));
-                mMovieInfo[i].setRelease_date(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(RELEASE_DATE));
-                mMovieInfo[i].setMovie_poster(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER));
-                mMovieInfo[i].setVote_average(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
-                mMovieInfo[i].setPlot_synopsis(movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
-            }
-
-            return mMovieInfo;
-        }
-
-        @Override
-        protected MovieInfo[] doInBackground(String... params) {
-            // Fetch data with API from TMdb
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String movieJsonStr = null;
-
-            try {
-                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie";
-                final String APIKEY ="829a2b250412b52d087fb34b2b9d64cb";
-
-                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendQueryParameter("sort_by",params[0])
-                        .appendQueryParameter("api_key", APIKEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    movieJsonStr = null;
-                }
-                movieJsonStr = buffer.toString();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
-                movieJsonStr = null;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try{
-                return getMovieInfoFromJSON(movieJsonStr);
-            }catch(JSONException e){
-                Log.v(LOG_TAG,e.toString());
-            }
-
-            return null;
-        }
-        @Override
-        protected void onPostExecute(MovieInfo[] mInfo) {
-            if (mInfo != null) {
-                mMoviePosterAdapter.clear();
-                for(MovieInfo m : mInfo) {
-                    mMoviePosterAdapter.addAll(m);
-                }
-            }
-        }
-
     }
 }
 
