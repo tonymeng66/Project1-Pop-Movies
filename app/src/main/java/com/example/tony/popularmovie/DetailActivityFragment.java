@@ -17,10 +17,13 @@
 package com.example.tony.popularmovie;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tony.popularmovie.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -44,12 +48,37 @@ import java.net.URL;
  * Shows detail movie information when user click on the movie poster on the main page
  */
 
-public class DetailActivityFragment extends Fragment {
+public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public MovieInfo movieInfo = new MovieInfo();
+    public DetailActivityFragment() {    }
 
-    public DetailActivityFragment() {
-    }
+    private static final int MOVIE_DETAL_LOADER = 0;
+
+    private static final String[] MOVIE_COLUMNS = {
+            // In this case the id needs to be fully qualified with a table name, since
+            // the content provider joins the location & weather tables in the background
+            // (both have an _id column)
+            // On the one hand, that's annoying.  On the other, you can search the weather table
+            // using the location set by the user, which is only in the Location table.
+            // So the convenience is worth it.
+            MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
+            MovieContract.PopularEntry.COLUMN_MOVIE_ID,
+            MovieContract.PopularEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.PopularEntry.COLUMN_RELEASE_DATE,
+            MovieContract.PopularEntry.COLUMN_MOVIE_POSTER,
+            MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS,
+            MovieContract.PopularEntry.COLUMN_POPULARITY
+    };
+
+    static final int COL_POPULAR_ID = 0;
+    static final int COL_POPULAR_MOVIE_ID = 1;
+    static final int COL_POPULAR_TITLE = 2;
+    static final int COL_POPULAR_RELEASE = 3;
+    static final int COL_POPULAR_POSTER = 4;
+    static final int COL_POPULAR_VOTE = 5;
+    static final int COL_POPULAR_PLOT = 6;
+    static final int COL_POPULAR_POPULARITY = 7;
     /**
      * Receive meta data and update the detail page content
      */
@@ -59,20 +88,23 @@ public class DetailActivityFragment extends Fragment {
 
         final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
 
-        Intent intent = getActivity().getIntent();
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        if (intent != null && intent.hasExtra("mInfo")) {
-            movieInfo = intent.getParcelableExtra("mInfo");
-            ((TextView) rootView.findViewById(R.id.movie_title)).setText(movieInfo.getTitle());
-            ((TextView) rootView.findViewById(R.id.movie_release_year)).setText(movieInfo.getRelease_date());
-            ((TextView) rootView.findViewById(R.id.movie_ratings)).setText(movieInfo.getVote_average());
-            ((TextView) rootView.findViewById(R.id.movie_overview)).setText(movieInfo.getPlot_synopsis());
-            ImageView imageView =(ImageView) rootView.findViewById(R.id.movie_poster);
-            Picasso.with(getActivity())
-                    .load(BASE_POSTER_PATH+movieInfo.getMovie_poster())
-                    .resize(360,600)
-                    .into(imageView);
-        }
+
         return rootView;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

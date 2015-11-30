@@ -16,15 +16,18 @@
 
 package com.example.tony.popularmovie;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.database.Cursor;
+import android.media.Image;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
+import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
+import com.example.tony.popularmovie.data.MovieContract;
 
 import com.squareup.picasso.Picasso;
 
@@ -34,35 +37,39 @@ import java.util.List;
  * Return imageview to the parent gridview according to item position
  */
 
-public class MoviePosterAdapter extends ArrayAdapter<MovieInfo> {
+public class MoviePosterAdapter extends CursorAdapter {
 
     final private String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
     private Context mContext;
+    private Cursor mCursor;
 
-    public MoviePosterAdapter(Activity context, List<MovieInfo> movieInfo) {
-        super(context, 0, movieInfo);
-        mContext=context;
+    @TargetApi(11)
+    public MoviePosterAdapter(Context context, Cursor c, int flags) {
+        super(context, c, flags);
+        mContext = context;
+        mCursor = c;
     }
 
     @Override
-    // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {
-        MovieInfo movieInfo = getItem(position);
-        ImageView imageView;
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        View view = LayoutInflater.from(context).inflate(R.layout.image_view_in_grid, parent, false);
 
-        if (convertView == null) {
-            // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 800));
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setPadding(0, 0, 0, 0);
-        } else {
-            imageView = (ImageView) convertView;
-        }
+        return view;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+
+        ImageView myView = (ImageView)view;
+
+        String posterPath = "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg";
+
+        //if(mCursor.moveToFirst()) {
+        //posterPath = mCursor.getString(mCursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
+        //}
 
         Picasso.with(mContext)
-                .load(BASE_POSTER_PATH + movieInfo.getMovie_poster())
-                .into(imageView);
-        return imageView;
+                .load(BASE_POSTER_PATH + posterPath)
+                .into(myView);
     }
 }

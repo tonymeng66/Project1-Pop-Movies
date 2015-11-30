@@ -22,8 +22,12 @@ import android.test.AndroidTestCase;
 
 import java.util.HashSet;
 
-import com.example.tony.popularmovie.data.MovieContract.MovieDetailEntry;
-import com.example.tony.popularmovie.data.MovieContract.DiscoverEntry;
+import com.example.tony.popularmovie.data.MovieContract.PopularEntry;
+import com.example.tony.popularmovie.data.MovieContract.RatingEntry;
+import com.example.tony.popularmovie.data.MovieContract.FavoriteEntry;
+import com.example.tony.popularmovie.data.MovieContract.VideoEntry;
+import com.example.tony.popularmovie.data.MovieContract.ReviewEntry;
+
 
 public class TestDb extends AndroidTestCase {
 
@@ -47,8 +51,11 @@ public class TestDb extends AndroidTestCase {
         // Note that there will be another table in the DB that stores the
         // Android metadata (db version information)
         final HashSet<String> tableNameHashSet = new HashSet<String>();
-        tableNameHashSet.add(MovieDetailEntry.TABLE_NAME);
-        tableNameHashSet.add(DiscoverEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.PopularEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.RatingEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.FavoriteEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.VideoEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.ReviewEntry.TABLE_NAME);
 
         mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
         SQLiteDatabase db = new MovieDbHelper(
@@ -72,7 +79,7 @@ public class TestDb extends AndroidTestCase {
                 tableNameHashSet.isEmpty());
 
         // now, do our tables contain the correct columns?
-        c = db.rawQuery("PRAGMA table_info(" + MovieContract.MovieDetailEntry.TABLE_NAME + ")",
+        c = db.rawQuery("PRAGMA table_info(" + MovieContract.PopularEntry.TABLE_NAME + ")",
                 null);
 
         assertTrue("Error: This means that we were unable to query the database for table information.",
@@ -80,10 +87,14 @@ public class TestDb extends AndroidTestCase {
 
         // Build a HashSet of all of the column names we want to look for
         final HashSet<String> MovieDetailColumnHashSet = new HashSet<String>();
-        MovieDetailColumnHashSet.add(MovieContract.MovieDetailEntry._ID);
-        MovieDetailColumnHashSet.add(MovieDetailEntry.COLUMN_RUNTIME);
-        MovieDetailColumnHashSet.add(MovieDetailEntry.COLUMN_VIDEO);
-        MovieDetailColumnHashSet.add(MovieDetailEntry.COLUMN_REVIEW);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry._ID);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_MOVIE_ID);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_MOVIE_TITLE);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_RELEASE_DATE);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS);
+        MovieDetailColumnHashSet.add(MovieContract.PopularEntry.COLUMN_POPULARITY);
 
         int columnNameIndex = c.getColumnIndex("name");
         do {
@@ -97,6 +108,7 @@ public class TestDb extends AndroidTestCase {
 
         db.close();
     }
+    /*
 
     public void testMovieDetailTable() {
 
@@ -149,8 +161,9 @@ public class TestDb extends AndroidTestCase {
         // Sixth Step: Close Cursor and Database
         cursor.close();
         db.close();
-    }
+    }*/
 
+    /*
     public void testDiscoverTable() {
 
         // First step: Get reference to writable database
@@ -202,5 +215,5 @@ public class TestDb extends AndroidTestCase {
         // Sixth Step: Close Cursor and Database
         cursor.close();
         db.close();
-    }
+    }*/
 }

@@ -19,8 +19,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.tony.popularmovie.data.MovieContract.MovieDetailEntry;
-import com.example.tony.popularmovie.data.MovieContract.DiscoverEntry;
+import com.example.tony.popularmovie.data.MovieContract.PopularEntry;
+import com.example.tony.popularmovie.data.MovieContract.RatingEntry;
+import com.example.tony.popularmovie.data.MovieContract.FavoriteEntry;
+import com.example.tony.popularmovie.data.MovieContract.VideoEntry;
+import com.example.tony.popularmovie.data.MovieContract.ReviewEntry;
+
 
 /**
  * Manages a local database for movie data.
@@ -40,32 +44,62 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // Create a table to hold movie_detail consists of the string supplied in the
         // movie_detail setting, the movie_id, and the trailer and review
-        final String SQL_CREATE_MOVIE_DETAIL_TABLE = "CREATE TABLE " + MovieDetailEntry.TABLE_NAME + " (" +
-                MovieDetailEntry._ID + " INTEGER PRIMARY KEY," +
-                MovieDetailEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
-                MovieDetailEntry.COLUMN_RUNTIME + " TEXT NOT NULL, " +
-                MovieDetailEntry.COLUMN_VIDEO + " TEXT NOT NULL, " +
-                MovieDetailEntry.COLUMN_REVIEW + " TEXT NOT NULL " +
+        final String SQL_CREATE_POPULAR_TABLE = "CREATE TABLE " + PopularEntry.TABLE_NAME + " (" +
+                PopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PopularEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                PopularEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
+                PopularEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                PopularEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
+                PopularEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
+                PopularEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
+                PopularEntry.COLUMN_POPULARITY + " TEXT NOT NULL " +
                 " );";
 
-        final String SQL_CREATE_DISCOVER_TABLE = "CREATE TABLE " + DiscoverEntry.TABLE_NAME + " (" +
-                DiscoverEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                // the ID of the movie_id entry associated with this discover data
-                DiscoverEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
-                DiscoverEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
-                DiscoverEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
-                DiscoverEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
-                DiscoverEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
-                DiscoverEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
-                DiscoverEntry.COLUMN_POPULARITY + " TEXT NOT NULL, " +
-                // Set up the movie_id column as a foreign key to movie_detail table.
-                " FOREIGN KEY (" + DiscoverEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
-                MovieDetailEntry.TABLE_NAME + " (" + MovieDetailEntry.COLUMN_MOVIE_ID + ")"+");";
+        final String SQL_CREATE_RATING_TABLE = "CREATE TABLE " + RatingEntry.TABLE_NAME + " (" +
+                RatingEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                RatingEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                RatingEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
+                RatingEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                RatingEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
+                RatingEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
+                RatingEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
+                RatingEntry.COLUMN_POPULARITY + " TEXT NOT NULL " +
+                " );";
 
+        final String SQL_CREATE_FAVORITE_TABLE = "CREATE TABLE " + MovieContract.FavoriteEntry.TABLE_NAME + " (" +
+                FavoriteEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                FavoriteEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
+                FavoriteEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
+                FavoriteEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                FavoriteEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
+                FavoriteEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
+                FavoriteEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
+                FavoriteEntry.COLUMN_POPULARITY + " TEXT NOT NULL " +
+                " );";
 
+        final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " (" +
+                VideoEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                VideoEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
+                VideoEntry.COLUMN_KEY + " TEXT NOT NULL, " +
+                VideoEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                VideoEntry.COLUMN_SITE + " TEXT NOT NULL, " +
+                VideoEntry.COLUMN_SIZE + " TEXT NOT NULL, " +
+                VideoEntry.COLUMN_TYPE + " TEXT NOT NULL " +
+                " );";
 
-        sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_DETAIL_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_DISCOVER_TABLE);
+        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME + " (" +
+                ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ReviewEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
+                ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
+                ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
+                ReviewEntry.COLUMN_URL + " TEXT NOT NULL " +
+                " );";
+
+        sqLiteDatabase.execSQL(SQL_CREATE_POPULAR_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_RATING_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_VIDEO_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
     }
 
     @Override
@@ -76,8 +110,11 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // It does NOT depend on the version number for your application.
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieDetailEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DiscoverEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PopularEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + RatingEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavoriteEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + VideoEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ReviewEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

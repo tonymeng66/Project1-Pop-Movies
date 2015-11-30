@@ -25,6 +25,7 @@ import android.test.AndroidTestCase;
  */
 public class TestMovieContract extends AndroidTestCase {
 
+
     // intentionally includes a slash to make sure Uri is getting quoted correctly
     private static final String TEST_MOVIE_ID = "550";
     private static final long TEST_DISCOVER_RANK = 1L;
@@ -33,6 +34,7 @@ public class TestMovieContract extends AndroidTestCase {
     /*
         Students: Uncomment this out to test your weather location function.
      */
+    /*
     public void testBuildDiscoverUri() {
         Uri discoverUri = MovieContract.DiscoverEntry.buildDiscoverUri(TEST_DISCOVER_RANK);
         assertNotNull("Error: Null Uri returned.", discoverUri);
@@ -59,6 +61,6 @@ public class TestMovieContract extends AndroidTestCase {
         assertEquals("Error: Moive Detail with Movie ID Uri doesn't match our expected result",
                 MovieDetailWithMovieIDUri.toString(),
                 "content://com.example.tony.popularmovie.app/movie_detail/550");
-    }
+    }*/
 
 }

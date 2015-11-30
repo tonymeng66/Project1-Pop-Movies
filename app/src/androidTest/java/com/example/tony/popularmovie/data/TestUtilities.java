@@ -20,7 +20,9 @@ import java.util.Set;
     Content Provider.  Note that you'll want your WeatherContract class to exactly match the one
     in our solution to use these as-given.
  */
+
 public class TestUtilities extends AndroidTestCase {
+    /*
     static final String TEST_MOVIE_ID = "550";
     //static final String TEST_RUNTIME = "220";  // December 20th, 2014
 
@@ -41,8 +43,8 @@ public class TestUtilities extends AndroidTestCase {
                     "' did not match the expected value '" +
                     expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
         }
-    }
-
+    }*/
+/*
     static ContentValues createDiscoverValues() {
         ContentValues testValues = new ContentValues();
         testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, "550");
@@ -100,17 +102,11 @@ public class TestUtilities extends AndroidTestCase {
         db.close();
 
         return movieRowId;
-    }
+    }*/
 
-    /*
-        Students: The functions we provide inside of TestProvider use this utility class to test
-        the ContentObserver callbacks using the PollingCheck class that we grabbed from the Android
-        CTS tests.
 
-        Note that this only tests that the onChange function is called; it does not test that the
-        correct Uri is returned.
-     */
 
+/*
     static class TestContentObserver extends ContentObserver {
         final HandlerThread mHT;
         boolean mContentChanged;
@@ -154,5 +150,5 @@ public class TestUtilities extends AndroidTestCase {
 
     static TestContentObserver getTestContentObserver() {
         return TestContentObserver.getTestContentObserver();
-    }
+    }*/
 }

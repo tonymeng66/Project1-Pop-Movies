@@ -27,8 +27,11 @@ import android.os.Build;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.tony.popularmovie.data.MovieContract.MovieDetailEntry;
-import com.example.tony.popularmovie.data.MovieContract.DiscoverEntry;
+import com.example.tony.popularmovie.data.MovieContract.PopularEntry;
+import com.example.tony.popularmovie.data.MovieContract.RatingEntry;
+import com.example.tony.popularmovie.data.MovieContract.FavoriteEntry;
+import com.example.tony.popularmovie.data.MovieContract.VideoEntry;
+import com.example.tony.popularmovie.data.MovieContract.ReviewEntry;
 
 import java.net.URI;
 
@@ -39,6 +42,7 @@ import java.net.URI;
     Students: Uncomment the tests in this class as you implement the functionality in your
     ContentProvider to make sure that you've implemented things reasonably correctly.
  */
+
 public class TestProvider extends AndroidTestCase {
 
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
@@ -51,7 +55,7 @@ public class TestProvider extends AndroidTestCase {
 
        Students: Replace the calls to deleteAllRecordsFromDB with this one after you have written
        the delete functionality in the ContentProvider.
-     */
+     *//*
     public void deleteAllRecordsFromProvider() {
         mContext.getContentResolver().delete(
                 MovieDetailEntry.CONTENT_URI,
@@ -89,22 +93,25 @@ public class TestProvider extends AndroidTestCase {
         Student: Refactor this function to use the deleteAllRecordsFromProvider functionality once
         you have implemented delete functionality there.
      */
+    /*
+    /*
     public void deleteAllRecords() {
         deleteAllRecordsFromProvider();
-    }
+    }*/
 
     // Since we want each test to start with a clean slate, run deleteAllRecords
     // in setUp (called by the test runner before each test).
+    /*
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteAllRecords();
-    }
+    }*/
 
     /*
         This test checks to make sure that the content provider is registered correctly.
         Students: Uncomment this test to make sure you've correctly registered the MovieProvider.
-     */
+     *//*
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
 
@@ -126,7 +133,7 @@ public class TestProvider extends AndroidTestCase {
             assertTrue("Error: MovieProvider not registered at " + mContext.getPackageName(),
                     false);
         }
-    }
+    }*/
 
     /*
             This test doesn't touch the database.  It verifies that the ContentProvider returns
@@ -134,7 +141,7 @@ public class TestProvider extends AndroidTestCase {
             Students: Uncomment this test to verify that your implementation of GetType is
             functioning correctly.
          */
-
+/*
     public void testGetType() {
         // content://com.example.tony.popularmovie.app/discover/
         String type = mContext.getContentResolver().getType(DiscoverEntry.CONTENT_URI);
@@ -163,7 +170,7 @@ public class TestProvider extends AndroidTestCase {
         // vnd.android.cursor.dir/com.example.tony.popularmovie.app/movie_detail
         assertEquals("Error: the MovieDetailEntry CONTENT_URI should return MovieDetailEntry.CONTENT_TYPE",
                 MovieDetailEntry.CONTENT_TYPE, type);
-    }
+    }*/
 
 
     /*
@@ -171,7 +178,7 @@ public class TestProvider extends AndroidTestCase {
         read out the data.  Uncomment this test to see if the basic movie query functionality
         given in the ContentProvider is working correctly.
      */
-
+/*
     public void testBasicDiscoverQuery() {
         ContentValues testValues = TestUtilities.createDiscoverValues();
 
@@ -191,8 +198,8 @@ public class TestProvider extends AndroidTestCase {
 
         // Make sure we get the correct cursor out of the database
         TestUtilities.validateCursor("testBasicDiscoverQuery", movieCursor, testValues);
-    }
-
+    }*/
+/*
     public void testBasicMovieDetailQueries() {
         ContentValues testValues = TestUtilities.createFightClubMovieValues();
 
@@ -217,13 +224,13 @@ public class TestProvider extends AndroidTestCase {
             assertEquals("Error: MovieDetail Query did not properly set NotificationUri",
                     movieCursor.getNotificationUri(), MovieDetailEntry.CONTENT_URI);
         }
-    }
+    }*/
 
     /*
         This test uses the provider to insert and then update the data. Uncomment this test to
         see if your update location is functioning correctly.
      */
-
+/*
     public void testUpdateMovieDetail() {
         // Create a new map of values, where column names are the keys
         ContentValues values = TestUtilities.createFightClubMovieValues();
@@ -275,7 +282,7 @@ public class TestProvider extends AndroidTestCase {
                 cursor, updatedValues);
 
         cursor.close();
-    }
+    }*/
 
 
     // Make sure we can still delete after adding/updating stuff
@@ -283,7 +290,7 @@ public class TestProvider extends AndroidTestCase {
     // Student: Uncomment this test after you have completed writing the insert functionality
     // in your provider.  It relies on insertions with testInsertReadProvider, so insert and
     // query functionality must also be complete before this test can be used.
-
+/*
     public void testInsertReadProvider() {
         ContentValues testValues = TestUtilities.createFightClubMovieValues();
 
@@ -345,14 +352,14 @@ public class TestProvider extends AndroidTestCase {
 
         TestUtilities.validateCursor("testInsertReadProvider. Error validating WeatherEntry insert.",
                 weatherCursor, discoverValues);
-    }
+    }*/
 
     // Make sure we can still delete after adding/updating stuff
     //
     // Student: Uncomment this test after you have completed writing the delete functionality
     // in your provider.  It relies on insertions with testInsertReadProvider, so insert and
     // query functionality must also be complete before this test can be used.
-
+/*
     public void testDeleteRecords() {
         testInsertReadProvider();
 
@@ -393,13 +400,13 @@ public class TestProvider extends AndroidTestCase {
             returnContentValues[i] = testValues;
         }
         return returnContentValues;
-    }
+    }*/
 
     // Student: Uncomment this test after you have completed writing the BulkInsert functionality
     // in your provider.  Note that this test will work with the built-in (default) provider
     // implementation, which just inserts records one-at-a-time, so really do implement the
     // BulkInsert ContentProvider function.
-
+/*
     public void testBulkInsert() {
         ContentValues testValues = TestUtilities.createFightClubMovieValues();
         Uri movieDetailUri = mContext.getContentResolver().insert(MovieDetailEntry.CONTENT_URI, testValues);
@@ -461,5 +468,5 @@ public class TestProvider extends AndroidTestCase {
                     cursor, bulkInsertContentValues[i]);
         }
         cursor.close();
-    }
+    }*/
 }
