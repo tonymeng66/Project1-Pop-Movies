@@ -113,13 +113,13 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.sortby_pop) {
-            //setmSortby("popularity.desc");
+            setmSortby("popularity.desc");
             //updateMovieInfo("popularity.desc");
             return true;
         }
         if (id == R.id.sortby_rate) {
             setmSortby("vote_average.desc");
-            updateMovieInfo("vote_average.desc");
+            //updateMovieInfo("vote_average.desc");
             return true;
         }
         return super.onOptionsItemSelected(item);

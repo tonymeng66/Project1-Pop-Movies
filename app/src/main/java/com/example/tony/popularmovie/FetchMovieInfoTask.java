@@ -73,6 +73,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
             if ( cVVector.size() > 0 ) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
+                //inserted = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArray);
                 inserted = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArray);
             }
 

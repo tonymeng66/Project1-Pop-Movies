@@ -9,4 +9,12 @@
         android:title="@string/sortby_rate"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id="@+id/favorite"
+        android:title="@string/favorite"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+    <item android:id="@+id/refresh"
+        android:title="@string/refresh"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
 </menu>

@@ -2,6 +2,8 @@
     <string name="app_name">Pop Movie</string>
     <string name="sortby_pop">Most Popular</string>
     <string name="sortby_rate">Highest Rated</string>
+    <string name="favorite">Favorites</string>
+    <string name="refresh">Refresh</string>
     <string name="movie_ratings_max">/10</string>
     <string name="title_activity_detail">Movie Detail</string>
 </resources>

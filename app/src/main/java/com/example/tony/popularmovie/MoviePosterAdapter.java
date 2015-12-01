@@ -40,14 +40,10 @@ import java.util.List;
 public class MoviePosterAdapter extends CursorAdapter {
 
     final private String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
-    private Context mContext;
-    private Cursor mCursor;
 
     @TargetApi(11)
     public MoviePosterAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        mContext = context;
-        mCursor = c;
     }
 
     @Override
@@ -62,13 +58,10 @@ public class MoviePosterAdapter extends CursorAdapter {
 
         ImageView myView = (ImageView)view;
 
-        String posterPath = "nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg";
+        String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
+        Log.d("Adaptor:",posterPath);
 
-        //if(mCursor.moveToFirst()) {
-        //posterPath = mCursor.getString(mCursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
-        //}
-
-        Picasso.with(mContext)
+        Picasso.with(context)
                 .load(BASE_POSTER_PATH + posterPath)
                 .into(myView);
     }
