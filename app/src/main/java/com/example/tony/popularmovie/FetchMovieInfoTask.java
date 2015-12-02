@@ -39,7 +39,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
     /**
      * Fetch movie information from "TheMovieDB" and parse it in the background , then pass it to the MoviePosterAdapter to update the main page.
      */
-    private void getDiscoverInfoFromJSON(String movieJsonStr) throws JSONException {
+    private void getDiscoverInfoFromJSON(String movieJsonStr,String sort_by) throws JSONException {
 
         final String ARRAY = "results";
         final String ID = "id";
@@ -69,15 +69,22 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
                 cVVector.add(discoverValues);
             }
             int inserted = 0;
+            int deleted = 0;
             // add to database
             if ( cVVector.size() > 0 ) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
-                //inserted = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArray);
-                inserted = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArray);
+                if (sort_by == "popularity.desc") {
+                    deleted = mContext.getContentResolver().delete(PopularEntry.CONTENT_URI,null,null);
+                    inserted = mContext.getContentResolver().bulkInsert(PopularEntry.CONTENT_URI, cvArray);
+                }
+                if (sort_by == "vote_average.desc") {
+                    deleted = mContext.getContentResolver().delete(RatingEntry.CONTENT_URI,null,null);
+                    inserted = mContext.getContentResolver().bulkInsert(RatingEntry.CONTENT_URI, cvArray);
+                }
             }
 
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + deleted + "Deleted "+ inserted + " Inserted " + "sort_by = " + sort_by);
 
         }catch(JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
@@ -90,6 +97,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
         // Fetch data with API from TMdb
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
+        String sort_by= params[0];
 
         // Will contain the raw JSON response as a string.
         String movieJsonStr = null;
@@ -99,7 +107,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
             final String APIKEY ="829a2b250412b52d087fb34b2b9d64cb";
 
             Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                    .appendQueryParameter("sort_by", params[0])
+                    .appendQueryParameter("sort_by", sort_by)
                     .appendQueryParameter("api_key", APIKEY)
                     .build();
 
@@ -130,7 +138,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
                 movieJsonStr = null;
             }
             movieJsonStr = buffer.toString();
-            getDiscoverInfoFromJSON(movieJsonStr);
+            getDiscoverInfoFromJSON(movieJsonStr,sort_by);
         } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();

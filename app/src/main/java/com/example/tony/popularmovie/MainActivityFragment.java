@@ -45,9 +45,11 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
 
     public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private static final int MOVIE_LOADER = 0;
+    private static final int POP_LOADER = 0;
+    private static final int RATING_LOADER = 1;
+    private static final int FAVORITE_LOADER = 2;
 
-    private static final String[] MOVIE_COLUMNS = {
+    private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
             MovieContract.PopularEntry.COLUMN_MOVIE_ID,
             MovieContract.PopularEntry.COLUMN_MOVIE_TITLE,
@@ -57,6 +59,27 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
             MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS,
             MovieContract.PopularEntry.COLUMN_POPULARITY
     };
+    private static final String[] RATING_COLUMNS = {
+            MovieContract.RatingEntry.TABLE_NAME + "." + MovieContract.RatingEntry._ID ,
+            MovieContract.RatingEntry.COLUMN_MOVIE_ID,
+            MovieContract.RatingEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.RatingEntry.COLUMN_RELEASE_DATE,
+            MovieContract.RatingEntry.COLUMN_MOVIE_POSTER,
+            MovieContract.RatingEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.RatingEntry.COLUMN_PLOT_SYNOPSYS,
+            MovieContract.RatingEntry.COLUMN_POPULARITY
+    };
+    private static final String[] FAVORITE_COLUMNS = {
+            MovieContract.FavoriteEntry.TABLE_NAME + "." + MovieContract.FavoriteEntry._ID ,
+            MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,
+            MovieContract.FavoriteEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,
+            MovieContract.FavoriteEntry.COLUMN_MOVIE_POSTER,
+            MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,
+            MovieContract.FavoriteEntry.COLUMN_POPULARITY
+    };
+
 
     static final int COL_MOVIE_ID = 0;
     static final int COL_MOVIE_MOVIE_ID = 1;
@@ -84,7 +107,8 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(POP_LOADER, null, this);
+        getLoaderManager().initLoader(RATING_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -114,12 +138,19 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
         int id = item.getItemId();
         if (id == R.id.sortby_pop) {
             setmSortby("popularity.desc");
+            getLoaderManager().restartLoader(POP_LOADER, null, this);
             //updateMovieInfo("popularity.desc");
             return true;
         }
         if (id == R.id.sortby_rate) {
             setmSortby("vote_average.desc");
+            getLoaderManager().restartLoader(RATING_LOADER, null, this);
             //updateMovieInfo("vote_average.desc");
+            return true;
+        }
+        if (id == R.id.refresh){
+            updateMovieInfo("popularity.desc");
+            updateMovieInfo("vote_average.desc");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,18 +176,56 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
     }
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
-        return new CursorLoader(getActivity(),
-                MovieContract.PopularEntry.CONTENT_URI,
-                MOVIE_COLUMNS,
-                null,
-                null,
-                null);
+        Loader loader = null;
+        switch(i) {
+            case POP_LOADER:
+            loader = new CursorLoader(getActivity(),
+                    MovieContract.PopularEntry.CONTENT_URI,
+                    POP_COLUMNS,
+                    null,
+                    null,
+                    null);
+                break;
+            case RATING_LOADER:
+            loader = new CursorLoader(getActivity(),
+                     MovieContract.RatingEntry.CONTENT_URI,
+                     RATING_COLUMNS,
+                     null,
+                     null,
+                     null);
+                break;
+            case FAVORITE_LOADER:
+            loader = new CursorLoader(getActivity(),
+                     MovieContract.FavoriteEntry.CONTENT_URI,
+                     FAVORITE_COLUMNS,
+                     null,
+                     null,
+                     null);
+                break;
+            default:
+                break;
+        }
+        return loader;
     }
     @TargetApi(11)
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mMoviePosterAdapter.swapCursor(cursor);
+        switch(cursorLoader.getId()) {
+            case POP_LOADER:
+                if(mSortby == "popularity.desc")
+                    mMoviePosterAdapter.swapCursor(cursor);
+                break;
+            case RATING_LOADER:
+                if(mSortby == "vote_average.desc")
+                    mMoviePosterAdapter.swapCursor(cursor);
+                break;
+            case FAVORITE_LOADER:
+                if(mSortby == "Favorite")
+                    mMoviePosterAdapter.swapCursor(cursor);
+                break;
+            default:
+                break;
+        }
     }
     @TargetApi(11)
     @Override
