@@ -19,6 +19,8 @@ package com.example.tony.popularmovie;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,7 +32,10 @@ import android.widget.ImageView;
 import com.example.tony.popularmovie.data.MovieContract;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -40,10 +45,12 @@ import java.util.List;
 public class MoviePosterAdapter extends CursorAdapter {
 
     final private String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
+    private final Context mContext;
 
     @TargetApi(11)
     public MoviePosterAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        mContext = context;
     }
 
     @Override
@@ -59,10 +66,10 @@ public class MoviePosterAdapter extends CursorAdapter {
         ImageView myView = (ImageView)view;
 
         String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
-        Log.d("Adaptor:",posterPath);
+        //Log.d("Adaptor:", posterPath);
 
         Picasso.with(context)
-                .load(BASE_POSTER_PATH + posterPath)
+                .load("file:/" + context.getExternalCacheDir().getAbsolutePath() + posterPath)
                 .into(myView);
     }
 }

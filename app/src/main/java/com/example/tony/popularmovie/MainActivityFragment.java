@@ -38,6 +38,7 @@ import android.widget.GridView;
 
 import com.example.tony.popularmovie.data.MovieContract;
 import com.example.tony.popularmovie.data.MovieDbHelper;
+import com.squareup.picasso.Target;
 
 /**
  * Populate the main page with an GridView which is filled by movie posters.
@@ -48,6 +49,8 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
     private static final int POP_LOADER = 0;
     private static final int RATING_LOADER = 1;
     private static final int FAVORITE_LOADER = 2;
+
+    private Target taget;
 
     private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -115,13 +118,11 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
     @Override
     public void onStart() {
         super.onStart();
-        //updateMovieInfo(mSortby);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
 
@@ -132,20 +133,15 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.sortby_pop) {
             setmSortby("popularity.desc");
             getLoaderManager().restartLoader(POP_LOADER, null, this);
-            //updateMovieInfo("popularity.desc");
             return true;
         }
         if (id == R.id.sortby_rate) {
             setmSortby("vote_average.desc");
             getLoaderManager().restartLoader(RATING_LOADER, null, this);
-            //updateMovieInfo("vote_average.desc");
             return true;
         }
         if (id == R.id.refresh){
@@ -174,6 +170,7 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
 
         return rootView;
     }
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Loader loader = null;
@@ -207,26 +204,13 @@ import com.example.tony.popularmovie.data.MovieDbHelper;
         }
         return loader;
     }
+
     @TargetApi(11)
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        switch(cursorLoader.getId()) {
-            case POP_LOADER:
-                if(mSortby == "popularity.desc")
-                    mMoviePosterAdapter.swapCursor(cursor);
-                break;
-            case RATING_LOADER:
-                if(mSortby == "vote_average.desc")
-                    mMoviePosterAdapter.swapCursor(cursor);
-                break;
-            case FAVORITE_LOADER:
-                if(mSortby == "Favorite")
-                    mMoviePosterAdapter.swapCursor(cursor);
-                break;
-            default:
-                break;
-        }
+        mMoviePosterAdapter.swapCursor(cursor);
     }
+
     @TargetApi(11)
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {

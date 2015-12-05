@@ -3,8 +3,12 @@ package com.example.tony.popularmovie;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.tony.popularmovie.data.MovieContract;
@@ -15,12 +19,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * Created by Tony on 2015/11/25.
@@ -58,13 +67,27 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
             for(int i=0;i<20;i++) {
                 ContentValues discoverValues = new ContentValues();
 
+                //All tables shares the same column except for table name
                 discoverValues.put(PopularEntry.COLUMN_MOVIE_ID,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(ID));
                 discoverValues.put(PopularEntry.COLUMN_MOVIE_TITLE,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TITLE));
                 discoverValues.put(PopularEntry.COLUMN_RELEASE_DATE,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(RELEASE_DATE));
                 discoverValues.put(PopularEntry.COLUMN_MOVIE_POSTER,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER));
-                discoverValues.put(PopularEntry.COLUMN_VOTE_AVERAGE,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
-                discoverValues.put(PopularEntry.COLUMN_PLOT_SYNOPSYS,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
-                discoverValues.put(PopularEntry.COLUMN_POPULARITY,movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(POPULARITY));
+                discoverValues.put(PopularEntry.COLUMN_VOTE_AVERAGE, movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(VOTE_AVERAGE));
+                discoverValues.put(PopularEntry.COLUMN_PLOT_SYNOPSYS, movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(PLOT_SYNOPSIS));
+                discoverValues.put(PopularEntry.COLUMN_POPULARITY, movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(POPULARITY));
+
+                Cursor cursor = mContext.getContentResolver().query(
+                        (sort_by=="popularity.desc")? (PopularEntry.CONTENT_URI):(RatingEntry.CONTENT_URI),
+                        null,
+                        (sort_by=="popularity.desc")?(PopularEntry.TABLE_NAME+"."+PopularEntry.COLUMN_MOVIE_POSTER + " = ? "):(RatingEntry.TABLE_NAME + "." + RatingEntry.COLUMN_MOVIE_POSTER + " = ? "),
+                        new String[]{movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(MOVIE_POSTER)},
+                        null);
+
+                //save image when it's not already in the database.
+                if(!cursor.moveToFirst())
+                    cacheImageToLocal(discoverValues.getAsString(PopularEntry.COLUMN_MOVIE_POSTER));
+
+                cursor.close();
 
                 cVVector.add(discoverValues);
             }
@@ -88,6 +111,28 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
 
         }catch(JSONException e){
             Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+    }
+
+    private void cacheImageToLocal(final String posterPath){
+
+        final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
+
+        //First create a new URL object
+        try {
+            URL url = new URL(BASE_POSTER_PATH+posterPath);
+
+            //Next create a file
+            File file = new File(mContext.getExternalCacheDir(),posterPath);
+            Log.d("cacheImageToLocal:",file.getAbsolutePath());
+
+            //Next create a Bitmap object and download the image to bitmap
+            Bitmap bitmap = BitmapFactory.decodeStream(url.openStream());
+
+            //Finally compress the bitmap, saving to the file previously created
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(file));
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
