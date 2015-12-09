@@ -178,18 +178,19 @@ public class TestProvider extends AndroidTestCase {
         read out the data.  Uncomment this test to see if the basic movie query functionality
         given in the ContentProvider is working correctly.
      */
-/*
+
     public void testBasicDiscoverQuery() {
         ContentValues testValues = TestUtilities.createDiscoverValues();
 
         // insert our test records into the database
-        long movieRowID = TestUtilities.insertFightClubMovieValues(mContext);
         long discoverRowID = TestUtilities.insertDiscoverValues(mContext);
 
         assertTrue("Unable to Insert DiscoverEntry into the Database", discoverRowID != -1);
+        Uri uri = PopularEntry.buildPopularUri(1);
         // Test the basic content provider query
         Cursor movieCursor = mContext.getContentResolver().query(
-                DiscoverEntry.CONTENT_URI,
+                //PopularEntry.CONTENT_URI,
+                uri,
                 null,
                 null,
                 null,
@@ -198,7 +199,7 @@ public class TestProvider extends AndroidTestCase {
 
         // Make sure we get the correct cursor out of the database
         TestUtilities.validateCursor("testBasicDiscoverQuery", movieCursor, testValues);
-    }*/
+    }
 /*
     public void testBasicMovieDetailQueries() {
         ContentValues testValues = TestUtilities.createFightClubMovieValues();

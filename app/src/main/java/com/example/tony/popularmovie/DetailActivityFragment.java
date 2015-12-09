@@ -18,11 +18,10 @@ package com.example.tony.popularmovie;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,16 +33,6 @@ import android.widget.TextView;
 import com.example.tony.popularmovie.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 /**
  * Shows detail movie information when user click on the movie poster on the main page
  */
@@ -52,15 +41,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     public DetailActivityFragment() {    }
 
-    private static final int MOVIE_DETAL_LOADER = 0;
+    private static final int POP_LOADER = 0;
+    private static final int RATING_LOADER = 1;
+    private static final int FAVORITE_LOADER = 2;
+    private static final int REVIEW_LOADER = 3;
+    private static final int TRAILER_LOADER = 4;
 
-    private static final String[] MOVIE_COLUMNS = {
-            // In this case the id needs to be fully qualified with a table name, since
-            // the content provider joins the location & weather tables in the background
-            // (both have an _id column)
-            // On the one hand, that's annoying.  On the other, you can search the weather table
-            // using the location set by the user, which is only in the Location table.
-            // So the convenience is worth it.
+    private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
+
+    private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
             MovieContract.PopularEntry.COLUMN_MOVIE_ID,
             MovieContract.PopularEntry.COLUMN_MOVIE_TITLE,
@@ -70,23 +59,47 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS,
             MovieContract.PopularEntry.COLUMN_POPULARITY
     };
+    private static final String[] RATING_COLUMNS = {
+            MovieContract.RatingEntry.TABLE_NAME + "." + MovieContract.RatingEntry._ID ,
+            MovieContract.RatingEntry.COLUMN_MOVIE_ID,
+            MovieContract.RatingEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.RatingEntry.COLUMN_RELEASE_DATE,
+            MovieContract.RatingEntry.COLUMN_MOVIE_POSTER,
+            MovieContract.RatingEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.RatingEntry.COLUMN_PLOT_SYNOPSYS,
+            MovieContract.RatingEntry.COLUMN_POPULARITY
+    };
+    private static final String[] FAVORITE_COLUMNS = {
+            MovieContract.FavoriteEntry.TABLE_NAME + "." + MovieContract.FavoriteEntry._ID ,
+            MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,
+            MovieContract.FavoriteEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,
+            MovieContract.FavoriteEntry.COLUMN_MOVIE_POSTER,
+            MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,
+            MovieContract.FavoriteEntry.COLUMN_POPULARITY
+    };
 
-    static final int COL_POPULAR_ID = 0;
-    static final int COL_POPULAR_MOVIE_ID = 1;
-    static final int COL_POPULAR_TITLE = 2;
-    static final int COL_POPULAR_RELEASE = 3;
-    static final int COL_POPULAR_POSTER = 4;
-    static final int COL_POPULAR_VOTE = 5;
-    static final int COL_POPULAR_PLOT = 6;
-    static final int COL_POPULAR_POPULARITY = 7;
-    /**
-     * Receive meta data and update the detail page content
-     */
+    static final int COL_ID = 0;
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_TITLE = 2;
+    static final int COL_RELEASE = 3;
+    static final int COL_POSTER = 4;
+    static final int COL_VOTE = 5;
+    static final int COL_PLOT = 6;
+    static final int COL_POPULARITY = 7;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(POP_LOADER, null, this);
+        getLoaderManager().initLoader(REVIEW_LOADER, null, this);
+        getLoaderManager().initLoader(TRAILER_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -95,11 +108,60 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        Intent intent = getActivity().getIntent();
+        if (intent == null) {
+            return null;
+        }
+
+        switch(id){
+            case POP_LOADER:
+                return new CursorLoader(
+                        getActivity(),
+                        intent.getData(),
+                        POP_COLUMNS,
+                        null,
+                        null,
+                        null
+                );
+            case RATING_LOADER:
+                return new CursorLoader(
+                        getActivity(),
+                        intent.getData(),
+                        RATING_COLUMNS,
+                        null,
+                        null,
+                        null
+                );
+            case FAVORITE_LOADER:
+                return new CursorLoader(
+                        getActivity(),
+                        intent.getData(),
+                        FAVORITE_COLUMNS,
+                        null,
+                        null,
+                        null
+                );
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        TextView title = (TextView)getActivity().findViewById(R.id.movie_title);
+        TextView ratings = (TextView)getActivity().findViewById(R.id.movie_ratings);
+        TextView overview = (TextView)getActivity().findViewById(R.id.movie_overview);
+        ImageView poster = (ImageView) getActivity().findViewById(R.id.movie_poster);
+
+        if (!data.moveToFirst()) {
+            Log.d("Detail","data is null");
+            return;
+        }
+
+        title.setText(data.getString(COL_TITLE));
+        ratings.setText(data.getString(COL_VOTE));
+        overview.setText(data.getString(COL_PLOT));
+        Picasso.with(getActivity()).load("file:/"+getActivity().getExternalCacheDir().getAbsolutePath() + data.getString(COL_POSTER)).into(poster);
 
     }
 

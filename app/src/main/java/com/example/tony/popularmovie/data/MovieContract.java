@@ -122,7 +122,7 @@ public class MovieContract {
     public static final class VideoEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE).build();
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_VIDEO).build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_VIDEO;

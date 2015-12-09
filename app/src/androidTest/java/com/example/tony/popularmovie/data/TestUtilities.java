@@ -22,9 +22,9 @@ import java.util.Set;
  */
 
 public class TestUtilities extends AndroidTestCase {
-    /*
+
     static final String TEST_MOVIE_ID = "550";
-    //static final String TEST_RUNTIME = "220";  // December 20th, 2014
+    static final String TEST_RUNTIME = "220";  // December 20th, 2014
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
@@ -43,17 +43,17 @@ public class TestUtilities extends AndroidTestCase {
                     "' did not match the expected value '" +
                     expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
         }
-    }*/
-/*
+    }
+
     static ContentValues createDiscoverValues() {
         ContentValues testValues = new ContentValues();
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, "550");
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_TITLE, "Fight Club");
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_RELEASE_DATE, "2015-11-7");
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_POSTER, "fightclubposterpath.png");
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_VOTE_AVERAGE, "5.0");
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_PLOT_SYNOPSYS, "it's a movie about street fight");
-        testValues.put(MovieContract.DiscoverEntry.COLUMN_POPULARITY, "7.8");
+        testValues.put(MovieContract.PopularEntry.COLUMN_MOVIE_ID, "550");
+        testValues.put(MovieContract.PopularEntry.COLUMN_MOVIE_TITLE, "Fight Club");
+        testValues.put(MovieContract.PopularEntry.COLUMN_RELEASE_DATE, "2015-11-7");
+        testValues.put(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER, "fightclubposterpath.png");
+        testValues.put(MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE, "5.0");
+        testValues.put(MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS, "it's a movie about street fight");
+        testValues.put(MovieContract.PopularEntry.COLUMN_POPULARITY, "7.8");
 
 
         return testValues;
@@ -66,16 +66,16 @@ public class TestUtilities extends AndroidTestCase {
         ContentValues testValues = TestUtilities.createDiscoverValues();
 
         long discoverRowId;
-        discoverRowId = db.insert(MovieContract.DiscoverEntry.TABLE_NAME, null, testValues);
+        discoverRowId = db.insert(MovieContract.PopularEntry.TABLE_NAME, null, testValues);
 
         // Verify we got a row back.
-        assertTrue("Error: Failure to insert Ciscover Values", discoverRowId != -1);
+        assertTrue("Error: Failure to insert Discover Values", discoverRowId != -1);
 
         db.close();
 
         return discoverRowId;
     }
-
+/*
     static ContentValues createFightClubMovieValues() {
         // Create a new map of values, where column names are the keys
         ContentValues testValues = new ContentValues();

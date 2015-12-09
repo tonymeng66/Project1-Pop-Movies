@@ -66,7 +66,8 @@ public class MoviePosterAdapter extends CursorAdapter {
         ImageView myView = (ImageView)view;
 
         String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
-        //Log.d("Adaptor:", posterPath);
+        int id = cursor.getInt(cursor.getColumnIndex(MovieContract.PopularEntry._ID));
+        //Log.d("Adaptor_ID:", Integer.toString(id));
 
         Picasso.with(context)
                 .load("file:/" + context.getExternalCacheDir().getAbsolutePath() + posterPath)

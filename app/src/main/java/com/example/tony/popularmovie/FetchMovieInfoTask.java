@@ -115,6 +115,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
         }
     }
 
+
     private void cacheImageToLocal(final String posterPath){
 
         final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
@@ -125,7 +126,7 @@ public class FetchMovieInfoTask extends AsyncTask<String,Void,Void> {
 
             //Next create a file
             File file = new File(mContext.getExternalCacheDir(),posterPath);
-            Log.d("cacheImageToLocal:",file.getAbsolutePath());
+            Log.d("cacheImageToLocal",file.getAbsolutePath());
 
             //Next create a Bitmap object and download the image to bitmap
             Bitmap bitmap = BitmapFactory.decodeStream(url.openStream());

@@ -19,7 +19,7 @@ package com.example.tony.popularmovie;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -37,7 +37,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.example.tony.popularmovie.data.MovieContract;
-import com.example.tony.popularmovie.data.MovieDbHelper;
 import com.squareup.picasso.Target;
 
 /**
@@ -46,9 +45,7 @@ import com.squareup.picasso.Target;
 
     public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private static final int POP_LOADER = 0;
-    private static final int RATING_LOADER = 1;
-    private static final int FAVORITE_LOADER = 2;
+    private static final int DISCOVER_LOADER = 0;
 
     private Target taget;
 
@@ -103,6 +100,20 @@ import com.squareup.picasso.Target;
         this.mSortby = mSortby;
     }
 
+    private Uri getSortByUri(int id){
+        Log.d("getSortByUri_id",Integer.toString(id));
+        switch(mSortby){
+            case "popularity.desc":
+                return MovieContract.PopularEntry.buildPopularUri(id);
+            case "vote_average.desc":
+                return MovieContract.RatingEntry.buildRatingUri(id);
+            case "Favorite":
+                return MovieContract.FavoriteEntry.buildFavoriteUri(id);
+            default:
+                return null;
+        }
+    }
+
     public void updateMovieInfo(String sortby){
         FetchMovieInfoTask movieTask = new FetchMovieInfoTask(getActivity());
         movieTask.execute(sortby);
@@ -110,8 +121,7 @@ import com.squareup.picasso.Target;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(POP_LOADER, null, this);
-        getLoaderManager().initLoader(RATING_LOADER, null, this);
+        getLoaderManager().initLoader(DISCOVER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -136,12 +146,17 @@ import com.squareup.picasso.Target;
         int id = item.getItemId();
         if (id == R.id.sortby_pop) {
             setmSortby("popularity.desc");
-            getLoaderManager().restartLoader(POP_LOADER, null, this);
+            getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
             return true;
         }
         if (id == R.id.sortby_rate) {
             setmSortby("vote_average.desc");
-            getLoaderManager().restartLoader(RATING_LOADER, null, this);
+            getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
+            return true;
+        }
+        if (id == R.id.favorite) {
+            setmSortby("Favorite");
+            getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
             return true;
         }
         if (id == R.id.refresh){
@@ -161,10 +176,11 @@ import com.squareup.picasso.Target;
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(mMoviePosterAdapter);
+
         gridview.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), DetailActivity.class));
+                startActivity(new Intent(getActivity(), DetailActivity.class).setData(getSortByUri(position+1)));
             }
         });
 
@@ -174,8 +190,8 @@ import com.squareup.picasso.Target;
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Loader loader = null;
-        switch(i) {
-            case POP_LOADER:
+        switch(mSortby) {
+            case "popularity.desc":
             loader = new CursorLoader(getActivity(),
                     MovieContract.PopularEntry.CONTENT_URI,
                     POP_COLUMNS,
@@ -183,7 +199,7 @@ import com.squareup.picasso.Target;
                     null,
                     null);
                 break;
-            case RATING_LOADER:
+            case "vote_average.desc":
             loader = new CursorLoader(getActivity(),
                      MovieContract.RatingEntry.CONTENT_URI,
                      RATING_COLUMNS,
@@ -191,7 +207,7 @@ import com.squareup.picasso.Target;
                      null,
                      null);
                 break;
-            case FAVORITE_LOADER:
+            case "Favorite":
             loader = new CursorLoader(getActivity(),
                      MovieContract.FavoriteEntry.CONTENT_URI,
                      FAVORITE_COLUMNS,
@@ -208,6 +224,8 @@ import com.squareup.picasso.Target;
     @TargetApi(11)
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d("Main OLF mSortby",mSortby);
+        Log.d("Main OLF curID",Integer.toString(cursorLoader.getId()));
         mMoviePosterAdapter.swapCursor(cursor);
     }
 

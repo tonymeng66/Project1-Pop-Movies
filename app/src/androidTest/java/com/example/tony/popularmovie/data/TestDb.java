@@ -108,9 +108,9 @@ public class TestDb extends AndroidTestCase {
 
         db.close();
     }
-    /*
 
-    public void testMovieDetailTable() {
+
+    public void testPopularTable() {
 
         // First step: Get reference to writable database
         // If there's an error in those massive SQL table creation Strings,
@@ -120,11 +120,11 @@ public class TestDb extends AndroidTestCase {
 
         // Second Step: Create ContentValues of what you want to insert
         // (you can use the createNorthPoleLocationValues if you wish)
-        ContentValues testValues = TestUtilities.createFightClubMovieValues();
+        ContentValues testValues = TestUtilities.createDiscoverValues();
 
         // Third Step: Insert ContentValues into database and get a row ID back
         long movieRowId;
-        movieRowId = db.insert(MovieContract.MovieDetailEntry.TABLE_NAME, null, testValues);
+        movieRowId = db.insert(MovieContract.PopularEntry.TABLE_NAME, null, testValues);
 
         // Verify we got a row back.
         assertTrue(movieRowId != -1);
@@ -135,7 +135,7 @@ public class TestDb extends AndroidTestCase {
         // Fourth Step: Query the database and receive a Cursor back
         // A cursor is your primary interface to the query results.
         Cursor cursor = db.query(
-                MovieContract.MovieDetailEntry.TABLE_NAME,  // Table to Query
+                MovieContract.PopularEntry.TABLE_NAME,  // Table to Query
                 null, // all columns
                 null, // Columns for the "where" clause
                 null, // Values for the "where" clause
@@ -161,7 +161,7 @@ public class TestDb extends AndroidTestCase {
         // Sixth Step: Close Cursor and Database
         cursor.close();
         db.close();
-    }*/
+    }
 
     /*
     public void testDiscoverTable() {

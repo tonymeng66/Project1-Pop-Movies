@@ -22,9 +22,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 
@@ -35,10 +33,13 @@ public class MovieProvider extends ContentProvider {
     private MovieDbHelper mOpenHelper;
 
     static final int POPULAR = 100;
-    static final int RATING = 101;
-    static final int FAVORITE = 102;
-    static final int VIDEO = 103;
-    static final int REVIEW = 104;
+    static final int POPULAR_WITH_ID = 101;
+    static final int RATING = 102;
+    static final int RATING_WITH_ID = 103;
+    static final int FAVORITE = 104;
+    static final int FAVORITE_WITH_ID = 105;
+    static final int VIDEO = 106;
+    static final int REVIEW = 107;
 
     @Override
     public boolean onCreate() {
@@ -55,8 +56,11 @@ public class MovieProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, MovieContract.PATH_POPULAR , POPULAR);
+        matcher.addURI(authority, MovieContract.PATH_POPULAR + "/#", POPULAR_WITH_ID);
         matcher.addURI(authority, MovieContract.PATH_RATING , RATING);
+        matcher.addURI(authority, MovieContract.PATH_RATING + "/#",RATING_WITH_ID);
         matcher.addURI(authority, MovieContract.PATH_FAVORITE , FAVORITE);
+        matcher.addURI(authority, MovieContract.PATH_FAVORITE + "/#",FAVORITE_WITH_ID);
         matcher.addURI(authority, MovieContract.PATH_VIDEO , VIDEO);
         matcher.addURI(authority, MovieContract.PATH_REVIEW , REVIEW);
 
@@ -73,10 +77,16 @@ public class MovieProvider extends ContentProvider {
             // Student: Uncomment and fill out these two cases
             case POPULAR:
                 return MovieContract.PopularEntry.CONTENT_TYPE;
+            case POPULAR_WITH_ID:
+                return MovieContract.PopularEntry.CONTENT_ITEM_TYPE;
             case RATING:
                 return MovieContract.RatingEntry.CONTENT_TYPE;
+            case RATING_WITH_ID:
+                return MovieContract.RatingEntry.CONTENT_ITEM_TYPE;
             case FAVORITE:
                 return MovieContract.FavoriteEntry.CONTENT_TYPE;
+            case FAVORITE_WITH_ID:
+                return MovieContract.FavoriteEntry.CONTENT_ITEM_TYPE;
             case VIDEO:
                 return MovieContract.VideoEntry.CONTENT_TYPE;
             case REVIEW:
@@ -105,8 +115,38 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
+            case POPULAR_WITH_ID:
+            {
+                Log.d("MovieProvider_POP",uri.toString());
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.PopularEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
             case RATING:
             {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.RatingEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
+            case RATING_WITH_ID:
+            {
+                Log.d("MovieProvider_RATING",uri.toString());
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.RatingEntry.TABLE_NAME,
                         projection,
@@ -131,6 +171,20 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
+            case FAVORITE_WITH_ID:
+            {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.FavoriteEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
             case VIDEO:
             {
                 retCursor = mOpenHelper.getReadableDatabase().query(
