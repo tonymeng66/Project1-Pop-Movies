@@ -23,12 +23,11 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/movie_ratings"
-        android:layout_marginRight="54dp"
-        android:layout_marginEnd="54dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginEnd="100dp"
         android:layout_below="@+id/movie_title"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="30dp" />
+        android:layout_alignParentEnd="true"/>
 
 
     <TextView
@@ -37,10 +36,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/movie_ratings_max"
         android:id="@+id/movie_ratings_max"
-        android:layout_marginRight="54dp"
-        android:layout_marginEnd="54dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginEnd="70dp"
         android:layout_below="@+id/movie_title"
-        android:layout_alignLeft="@+id/movie_ratings" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <ImageView
         android:layout_width="wrap_content"

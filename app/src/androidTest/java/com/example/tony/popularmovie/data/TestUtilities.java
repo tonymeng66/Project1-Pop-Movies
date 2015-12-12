@@ -24,7 +24,7 @@ import java.util.Set;
 public class TestUtilities extends AndroidTestCase {
 
     static final String TEST_MOVIE_ID = "550";
-    static final String TEST_RUNTIME = "220";  // December 20th, 2014
+    //static final String TEST_RUNTIME = "220";  // December 20th, 2014
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
@@ -69,7 +69,7 @@ public class TestUtilities extends AndroidTestCase {
         discoverRowId = db.insert(MovieContract.PopularEntry.TABLE_NAME, null, testValues);
 
         // Verify we got a row back.
-        assertTrue("Error: Failure to insert Discover Values", discoverRowId != -1);
+        assertTrue("Error: Failure to insert Ciscover Values", discoverRowId != -1);
 
         db.close();
 
@@ -106,7 +106,7 @@ public class TestUtilities extends AndroidTestCase {
 
 
 
-/*
+
     static class TestContentObserver extends ContentObserver {
         final HandlerThread mHT;
         boolean mContentChanged;
@@ -150,5 +150,5 @@ public class TestUtilities extends AndroidTestCase {
 
     static TestContentObserver getTestContentObserver() {
         return TestContentObserver.getTestContentObserver();
-    }*/
+    }
 }

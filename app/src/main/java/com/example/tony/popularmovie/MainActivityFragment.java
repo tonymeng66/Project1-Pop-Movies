@@ -100,15 +100,14 @@ import com.squareup.picasso.Target;
         this.mSortby = mSortby;
     }
 
-    private Uri getSortByUri(int id){
-        Log.d("getSortByUri_id",Integer.toString(id));
+    private Uri getSortByUri(){
         switch(mSortby){
             case "popularity.desc":
-                return MovieContract.PopularEntry.buildPopularUri(id);
+                return MovieContract.PopularEntry.CONTENT_URI;
             case "vote_average.desc":
-                return MovieContract.RatingEntry.buildRatingUri(id);
+                return MovieContract.RatingEntry.CONTENT_URI;
             case "Favorite":
-                return MovieContract.FavoriteEntry.buildFavoriteUri(id);
+                return MovieContract.FavoriteEntry.CONTENT_URI;
             default:
                 return null;
         }
@@ -180,7 +179,11 @@ import com.squareup.picasso.Target;
         gridview.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), DetailActivity.class).setData(getSortByUri(position+1)));
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.setData(getSortByUri());
+                intent.putExtra("sortBy",mSortby);
+                intent.putExtra("position",position);
+                startActivity(intent);
             }
         });
 
@@ -224,8 +227,6 @@ import com.squareup.picasso.Target;
     @TargetApi(11)
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d("Main OLF mSortby",mSortby);
-        Log.d("Main OLF curID",Integer.toString(cursorLoader.getId()));
         mMoviePosterAdapter.swapCursor(cursor);
     }
 
@@ -235,7 +236,3 @@ import com.squareup.picasso.Target;
         mMoviePosterAdapter.swapCursor(null);
     }
 }
-
-
-
-

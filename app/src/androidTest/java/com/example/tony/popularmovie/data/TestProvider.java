@@ -55,21 +55,15 @@ public class TestProvider extends AndroidTestCase {
 
        Students: Replace the calls to deleteAllRecordsFromDB with this one after you have written
        the delete functionality in the ContentProvider.
-     *//*
+     */
     public void deleteAllRecordsFromProvider() {
         mContext.getContentResolver().delete(
-                MovieDetailEntry.CONTENT_URI,
+                PopularEntry.CONTENT_URI,
                 null,
                 null
         );
-        mContext.getContentResolver().delete(
-                DiscoverEntry.CONTENT_URI,
-                null,
-                null
-        );
-
         Cursor cursor = mContext.getContentResolver().query(
-                DiscoverEntry.CONTENT_URI,
+                PopularEntry.CONTENT_URI,
                 null,
                 null,
                 null,
@@ -77,41 +71,30 @@ public class TestProvider extends AndroidTestCase {
         );
         assertEquals("Error: Records not deleted from Discover table during delete", 0, cursor.getCount());
         cursor.close();
-
-        cursor = mContext.getContentResolver().query(
-                MovieDetailEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
-        assertEquals("Error: Records not deleted from MovieDetail table during delete", 0, cursor.getCount());
-        cursor.close();
     }
 
     /*
         Student: Refactor this function to use the deleteAllRecordsFromProvider functionality once
         you have implemented delete functionality there.
      */
-    /*
-    /*
+
     public void deleteAllRecords() {
         deleteAllRecordsFromProvider();
-    }*/
+    }
 
     // Since we want each test to start with a clean slate, run deleteAllRecords
     // in setUp (called by the test runner before each test).
-    /*
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteAllRecords();
-    }*/
+    }
 
     /*
         This test checks to make sure that the content provider is registered correctly.
         Students: Uncomment this test to make sure you've correctly registered the MovieProvider.
-     *//*
+     */
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
 
@@ -133,44 +116,29 @@ public class TestProvider extends AndroidTestCase {
             assertTrue("Error: MovieProvider not registered at " + mContext.getPackageName(),
                     false);
         }
-    }*/
-
+    }
     /*
             This test doesn't touch the database.  It verifies that the ContentProvider returns
             the correct type for each type of URI that it can handle.
             Students: Uncomment this test to verify that your implementation of GetType is
             functioning correctly.
          */
-/*
+
     public void testGetType() {
         // content://com.example.tony.popularmovie.app/discover/
-        String type = mContext.getContentResolver().getType(DiscoverEntry.CONTENT_URI);
+        String type = mContext.getContentResolver().getType(PopularEntry.CONTENT_URI);
         // vnd.android.cursor.dir/com.example.tony.popularmovie.app/discover/
-        assertEquals("Error: the DiscoverEntry CONTENT_URI should return DiscoverEntry.CONTENT_TYPE",
-                DiscoverEntry.CONTENT_TYPE, type);
+        assertEquals("Error: the PopularEntry CONTENT_URI should return PopularEntry.CONTENT_TYPE",
+                PopularEntry.CONTENT_TYPE, type);
 
         Long test_ID = 100L;
         // content://com.example.tony.popularmovie.app/discover/100
         type = mContext.getContentResolver().getType(
-                DiscoverEntry.buildDiscoverUri(test_ID));
+                PopularEntry.buildPopularUri(test_ID));
         // vnd.android.cursor.dir/com.example.tony.popularmovie.app/discover
-        assertEquals("Error: the WeatherEntry CONTENT_URI with location should return WeatherEntry.CONTENT_TYPE",
-                DiscoverEntry.CONTENT_TYPE, type);
-
-        String testMovieID = "1000";
-        // content://com.example.tony.popularmovie.app/movie_detail/1000
-        type = mContext.getContentResolver().getType(
-                MovieDetailEntry.buildMovieDetailWithMovieID(testMovieID));
-        // vnd.android.cursor.dir/com.example.android.sunshine.app/movie_detail/1000
-        assertEquals("Error: the WeatherEntry CONTENT_URI with location and date should return WeatherEntry.CONTENT_ITEM_TYPE",
-                MovieDetailEntry.CONTENT_TYPE, type);
-
-        // content://com.example.tony.popularmovie.app/movie_detail/
-        type = mContext.getContentResolver().getType(MovieDetailEntry.CONTENT_URI);
-        // vnd.android.cursor.dir/com.example.tony.popularmovie.app/movie_detail
-        assertEquals("Error: the MovieDetailEntry CONTENT_URI should return MovieDetailEntry.CONTENT_TYPE",
-                MovieDetailEntry.CONTENT_TYPE, type);
-    }*/
+        assertEquals("Error: the PoppularEntry CONTENT_URI with _id should return PopularEntry.ITEM_TYPE",
+                PopularEntry.CONTENT_ITEM_TYPE, type);
+    }
 
 
     /*
@@ -186,11 +154,9 @@ public class TestProvider extends AndroidTestCase {
         long discoverRowID = TestUtilities.insertDiscoverValues(mContext);
 
         assertTrue("Unable to Insert DiscoverEntry into the Database", discoverRowID != -1);
-        Uri uri = PopularEntry.buildPopularUri(1);
         // Test the basic content provider query
         Cursor movieCursor = mContext.getContentResolver().query(
-                //PopularEntry.CONTENT_URI,
-                uri,
+                PopularEntry.CONTENT_URI,
                 null,
                 null,
                 null,
@@ -291,14 +257,14 @@ public class TestProvider extends AndroidTestCase {
     // Student: Uncomment this test after you have completed writing the insert functionality
     // in your provider.  It relies on insertions with testInsertReadProvider, so insert and
     // query functionality must also be complete before this test can be used.
-/*
+
     public void testInsertReadProvider() {
-        ContentValues testValues = TestUtilities.createFightClubMovieValues();
+        ContentValues testValues = TestUtilities.createDiscoverValues();
 
         // Register a content observer for our insert.  This time, directly with the content resolver
         TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
-        mContext.getContentResolver().registerContentObserver(MovieDetailEntry.CONTENT_URI, true, tco);
-        Uri movieUri = mContext.getContentResolver().insert(MovieDetailEntry.CONTENT_URI, testValues);
+        mContext.getContentResolver().registerContentObserver(PopularEntry.CONTENT_URI, true, tco);
+        Uri movieUri = mContext.getContentResolver().insert(PopularEntry.CONTENT_URI, testValues);
 
         // Did our content observer get called?  Students:  If this fails, your insert location
         // isn't calling getContext().getContentResolver().notifyChange(uri, null);
@@ -315,22 +281,24 @@ public class TestProvider extends AndroidTestCase {
 
         // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
-                MovieDetailEntry.CONTENT_URI,
+                PopularEntry.CONTENT_URI,
+                //movieUri,
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
                 null  // sort order
         );
 
+
         TestUtilities.validateCursor("testInsertReadProvider. Error validating MovieDetailEntry.",
                 cursor, testValues);
-
+/*
         // Fantastic.  Now that we have a location, add some weather!
         ContentValues discoverValues = TestUtilities.createDiscoverValues();
         // The TestContentObserver is a one-shot class
         tco = TestUtilities.getTestContentObserver();
 
-        mContext.getContentResolver().registerContentObserver(DiscoverEntry.CONTENT_URI, true, tco);
+        mContext.getContentResolver().registerContentObserver(PopularEntry.CONTENT_URI, true, tco);
 
         Uri discoverInsertUri = mContext.getContentResolver()
                 .insert(DiscoverEntry.CONTENT_URI, discoverValues);
@@ -352,8 +320,8 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("testInsertReadProvider. Error validating WeatherEntry insert.",
-                weatherCursor, discoverValues);
-    }*/
+                weatherCursor, discoverValues);*/
+    }
 
     // Make sure we can still delete after adding/updating stuff
     //

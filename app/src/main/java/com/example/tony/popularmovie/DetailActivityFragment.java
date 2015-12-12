@@ -41,9 +41,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     public DetailActivityFragment() {    }
 
-    private static final int POP_LOADER = 0;
-    private static final int RATING_LOADER = 1;
-    private static final int FAVORITE_LOADER = 2;
+    private static final int DETAIL_LOADER = 0;
     private static final int REVIEW_LOADER = 3;
     private static final int TRAILER_LOADER = 4;
 
@@ -91,9 +89,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(POP_LOADER, null, this);
-        getLoaderManager().initLoader(REVIEW_LOADER, null, this);
-        getLoaderManager().initLoader(TRAILER_LOADER, null, this);
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -102,7 +98,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
         return rootView;
     }
 
@@ -112,33 +107,35 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         if (intent == null) {
             return null;
         }
+        int position = intent.getIntExtra("position",0);
+        String sortBy = intent.getStringExtra("sortBy");
 
-        switch(id){
-            case POP_LOADER:
+        switch(sortBy){
+            case "popularity.desc":
                 return new CursorLoader(
                         getActivity(),
                         intent.getData(),
                         POP_COLUMNS,
-                        null,
-                        null,
+                        MovieContract.PopularEntry._ID + " = ? ",
+                        new String[]{Integer.toString(position+1)},
                         null
                 );
-            case RATING_LOADER:
+            case "vote_average.desc":
                 return new CursorLoader(
                         getActivity(),
                         intent.getData(),
                         RATING_COLUMNS,
-                        null,
-                        null,
+                        MovieContract.PopularEntry._ID + " = ? ",
+                        new String[]{Integer.toString(position+1)},
                         null
                 );
-            case FAVORITE_LOADER:
+            case "Favorite":
                 return new CursorLoader(
                         getActivity(),
                         intent.getData(),
                         FAVORITE_COLUMNS,
-                        null,
-                        null,
+                        MovieContract.PopularEntry._ID + " = ? ",
+                        new String[]{Integer.toString(position+1)},
                         null
                 );
             default:
