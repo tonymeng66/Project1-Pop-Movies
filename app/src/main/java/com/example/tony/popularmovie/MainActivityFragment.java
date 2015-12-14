@@ -17,7 +17,9 @@
 package com.example.tony.popularmovie;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -45,6 +47,7 @@ import com.squareup.picasso.Target;
 
     public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
+    public static String PREFS_NAME = "SORT_BY";
     private static final int DISCOVER_LOADER = 0;
 
     private Target taget;
@@ -92,7 +95,7 @@ import com.squareup.picasso.Target;
 
     private MoviePosterAdapter mMoviePosterAdapter;
 
-    private String mSortby ="popularity.desc";
+    private String mSortby ="vote_average.desc";
 
     public MainActivityFragment() {    }
 
@@ -101,7 +104,11 @@ import com.squareup.picasso.Target;
     }
 
     private Uri getSortByUri(){
-        switch(mSortby){
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        final String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
+        Log.d("getSortByUri/sortby",sortBy);
+
+        switch(sortBy){
             case "popularity.desc":
                 return MovieContract.PopularEntry.CONTENT_URI;
             case "vote_average.desc":
@@ -125,8 +132,9 @@ import com.squareup.picasso.Target;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
+        super.onResume();
     }
 
     @Override
@@ -142,19 +150,25 @@ import com.squareup.picasso.Target;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
         int id = item.getItemId();
         if (id == R.id.sortby_pop) {
-            setmSortby("popularity.desc");
+            editor.putString(PREFS_NAME, "popularity.desc");
+            editor.commit();
             getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
             return true;
         }
         if (id == R.id.sortby_rate) {
-            setmSortby("vote_average.desc");
+            editor.putString(PREFS_NAME, "vote_average.desc");
+            editor.commit();
             getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
             return true;
         }
         if (id == R.id.favorite) {
-            setmSortby("Favorite");
+            editor.putString(PREFS_NAME, "Favorite");
+            editor.commit();
             getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
             return true;
         }
@@ -181,7 +195,6 @@ import com.squareup.picasso.Target;
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.setData(getSortByUri());
-                intent.putExtra("sortBy",mSortby);
                 intent.putExtra("position",position);
                 startActivity(intent);
             }
@@ -192,8 +205,11 @@ import com.squareup.picasso.Target;
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
+
         Loader loader = null;
-        switch(mSortby) {
+        switch(sortBy) {
             case "popularity.desc":
             loader = new CursorLoader(getActivity(),
                     MovieContract.PopularEntry.CONTENT_URI,

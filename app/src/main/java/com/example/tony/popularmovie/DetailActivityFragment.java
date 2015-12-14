@@ -17,6 +17,7 @@
 package com.example.tony.popularmovie;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final int DETAIL_LOADER = 0;
     private static final int REVIEW_LOADER = 3;
     private static final int TRAILER_LOADER = 4;
+
+    public static String PREFS_NAME = "SORT_BY";
 
     private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
 
@@ -108,7 +111,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             return null;
         }
         int position = intent.getIntExtra("position",0);
-        String sortBy = intent.getStringExtra("sortBy");
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
+        Log.d("DetailActivityLoader/sortby",sortBy);
 
         switch(sortBy){
             case "popularity.desc":
