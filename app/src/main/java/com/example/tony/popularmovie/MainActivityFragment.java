@@ -50,7 +50,6 @@ import com.squareup.picasso.Target;
     public static String PREFS_NAME = "SORT_BY";
     private static final int DISCOVER_LOADER = 0;
 
-    private Target taget;
 
     private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -106,7 +105,6 @@ import com.squareup.picasso.Target;
     private Uri getSortByUri(){
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         final String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
-        Log.d("getSortByUri/sortby",sortBy);
 
         switch(sortBy){
             case "popularity.desc":

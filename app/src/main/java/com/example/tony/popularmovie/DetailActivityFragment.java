@@ -16,9 +16,14 @@
 
 package com.example.tony.popularmovie;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Movie;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -28,11 +33,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tony.popularmovie.data.MovieContract;
 import com.squareup.picasso.Picasso;
+
+import java.security.KeyStore;
 
 /**
  * Shows detail movie information when user click on the movie poster on the main page
@@ -45,6 +54,14 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final int DETAIL_LOADER = 0;
     private static final int REVIEW_LOADER = 3;
     private static final int TRAILER_LOADER = 4;
+
+    private static String sMovieId ;
+    private static String sMovieTitle ;
+    private static String sReleaseDate ;
+    private static String sMoviePoster ;
+    private static String sVoteAverage ;
+    private static String sPlotSynopsis ;
+    private static String sPopularity ;
 
     public static String PREFS_NAME = "SORT_BY";
 
@@ -101,8 +118,28 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
         return rootView;
     }
+
+    private void insertFavorite(){
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,sMovieId);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_TITLE,sMovieTitle);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,sReleaseDate);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_POSTER,sMoviePoster);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,sVoteAverage);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,sPlotSynopsis);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_POPULARITY,sPopularity);
+
+        Uri uri = getActivity().getContentResolver().insert(MovieContract.FavoriteEntry.CONTENT_URI,contentValues);
+        long rowId = ContentUris.parseId(uri);
+
+        if(rowId==-1)
+            Log.d("Detail","Favorite insert fail");
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -113,7 +150,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         int position = intent.getIntExtra("position",0);
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
-        Log.d("DetailActivityLoader/sortby",sortBy);
 
         switch(sortBy){
             case "popularity.desc":
@@ -160,10 +196,46 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             return;
         }
 
-        title.setText(data.getString(COL_TITLE));
-        ratings.setText(data.getString(COL_VOTE));
-        overview.setText(data.getString(COL_PLOT));
-        Picasso.with(getActivity()).load("file:/"+getActivity().getExternalCacheDir().getAbsolutePath() + data.getString(COL_POSTER)).into(poster);
+        sMovieId = data.getString(COL_MOVIE_ID);
+        sMovieTitle = data.getString(COL_TITLE);
+        sReleaseDate = data.getString(COL_RELEASE);
+        sMoviePoster = data.getString(COL_POSTER);
+        sVoteAverage = data.getString(COL_VOTE);
+        sPlotSynopsis = data.getString(COL_PLOT);
+        sPopularity = data.getString(COL_POPULARITY);
+
+        CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.checkBox);
+        Log.d("Detail sID",sMovieId);
+        Cursor cursor = getActivity().getContentResolver().query(
+                MovieContract.FavoriteEntry.CONTENT_URI,
+                FAVORITE_COLUMNS,
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ? ",
+                new String[]{sMovieId},
+                null
+        );
+        if(cursor.moveToFirst())
+            checkBox.setChecked(true);
+        else
+            checkBox.setChecked(false);
+
+        cursor.close();
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isChecked()) {
+                    insertFavorite();
+                } else {
+                    Log.d("onCreate", "not checked");
+                }
+            }
+        });
+
+
+        title.setText(sMovieTitle);
+        ratings.setText(sVoteAverage);
+        overview.setText(sPlotSynopsis);
+        Picasso.with(getActivity()).load("file:/"+getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster).into(poster);
 
     }
 
