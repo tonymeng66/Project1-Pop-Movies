@@ -170,8 +170,8 @@ import com.squareup.picasso.Target;
             return true;
         }
         if (id == R.id.refresh){
-            //updateMovieInfo("popularity.desc");
-            //updateMovieInfo("vote_average.desc");
+            updateMovieInfo("popularity.desc");
+            updateMovieInfo("vote_average.desc");
             int rowsdeleted = getActivity().getContentResolver().delete(MovieContract.FavoriteEntry.CONTENT_URI,null,null);
             return true;
         }

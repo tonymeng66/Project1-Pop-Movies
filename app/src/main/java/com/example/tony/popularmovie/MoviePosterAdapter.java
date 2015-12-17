@@ -70,7 +70,7 @@ public class MoviePosterAdapter extends CursorAdapter {
         //Log.d("Adaptor_ID:", Integer.toString(id));
 
         Picasso.with(context)
-                .load("file:/" + context.getExternalCacheDir().getAbsolutePath() + posterPath)
+                .load("file://" + context.getExternalCacheDir().getAbsolutePath() + posterPath)
                 .into(myView);
     }
 }

@@ -246,7 +246,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         title.setText(sMovieTitle);
         ratings.setText(sVoteAverage);
         overview.setText(sPlotSynopsis);
-        Picasso.with(getActivity()).load("file:/"+getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster).into(poster);
+        Picasso.with(getActivity()).load("file://"+getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster).into(poster);
 
 
     }
