@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.example.tony.popularmovie.data.MovieContract;
 import com.squareup.picasso.Target;
@@ -94,29 +95,7 @@ import com.squareup.picasso.Target;
 
     private MoviePosterAdapter mMoviePosterAdapter;
 
-    private String mSortby ="vote_average.desc";
-
     public MainActivityFragment() {    }
-
-    public void setmSortby(String mSortby) {
-        this.mSortby = mSortby;
-    }
-
-    private Uri getSortByUri(){
-        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
-        final String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
-
-        switch(sortBy){
-            case "popularity.desc":
-                return MovieContract.PopularEntry.CONTENT_URI;
-            case "vote_average.desc":
-                return MovieContract.RatingEntry.CONTENT_URI;
-            case "Favorite":
-                return MovieContract.FavoriteEntry.CONTENT_URI;
-            default:
-                return null;
-        }
-    }
 
     public void updateMovieInfo(String sortby){
         FetchMovieInfoTask movieTask = new FetchMovieInfoTask(getActivity());
@@ -131,6 +110,23 @@ import com.squareup.picasso.Target;
 
     @Override
     public void onResume() {
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
+
+        switch(sortBy){
+            case "popularity.desc":
+                getActivity().setTitle("Most Popular");
+                break;
+            case "vote_average.desc":
+                getActivity().setTitle("Highest Rated");
+                break;
+            case "Favorite":
+                getActivity().setTitle("Favorites");
+                break;
+            default:
+                getActivity().setTitle("Pop Movies");
+                break;
+        }
         getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
         super.onResume();
     }
@@ -156,23 +152,27 @@ import com.squareup.picasso.Target;
             editor.putString(PREFS_NAME, "popularity.desc");
             editor.commit();
             getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
+            getActivity().setTitle("Most Popular");
             return true;
         }
         if (id == R.id.sortby_rate) {
             editor.putString(PREFS_NAME, "vote_average.desc");
             editor.commit();
             getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
+            getActivity().setTitle("Highest Rated");
             return true;
         }
         if (id == R.id.favorite) {
             editor.putString(PREFS_NAME, "Favorite");
             editor.commit();
             getLoaderManager().restartLoader(DISCOVER_LOADER, null, this);
+            getActivity().setTitle("Favorites");
             return true;
         }
         if (id == R.id.refresh){
-            updateMovieInfo("popularity.desc");
-            updateMovieInfo("vote_average.desc");
+            //updateMovieInfo("popularity.desc");
+            //updateMovieInfo("vote_average.desc");
+            int rowsdeleted = getActivity().getContentResolver().delete(MovieContract.FavoriteEntry.CONTENT_URI,null,null);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -191,9 +191,13 @@ import com.squareup.picasso.Target;
         gridview.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor)parent.getItemAtPosition(position);
+                String movieId = null;
+                if(cursor.moveToPosition(position)){
+                    movieId= cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_ID));
+                }
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.setData(getSortByUri());
-                intent.putExtra("position",position);
+                intent.putExtra("movieId", movieId);
                 startActivity(intent);
             }
         });

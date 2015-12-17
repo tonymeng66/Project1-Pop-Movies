@@ -64,9 +64,9 @@ public class MoviePosterAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
 
         ImageView myView = (ImageView)view;
-
+        //Popular ,Ratings, Favorite tables share the same columns
         String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
-        int id = cursor.getInt(cursor.getColumnIndex(MovieContract.PopularEntry._ID));
+        //int id = cursor.getInt(cursor.getColumnIndex(MovieContract.PopularEntry._ID));
         //Log.d("Adaptor_ID:", Integer.toString(id));
 
         Picasso.with(context)

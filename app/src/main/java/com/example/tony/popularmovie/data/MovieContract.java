@@ -62,6 +62,9 @@ public class MovieContract {
         public static Uri buildPopularUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+        /*public static Uri buildPopularUriWithMovieId(String movieId){
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+        }*/
     }
 
     /* Inner class that defines the contents of the rating table */
@@ -88,6 +91,9 @@ public class MovieContract {
         public static Uri buildRatingUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+        /*public static Uri buildRatingUriWithMovieId(String movieId){
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+        }*/
     }
 
 
@@ -115,6 +121,9 @@ public class MovieContract {
         public static Uri buildFavoriteUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+        /*public static Uri buildFavoriteUriWithMovieId(String movieId){
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+        }*/
     }
 
 

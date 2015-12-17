@@ -117,7 +117,6 @@ public class MovieProvider extends ContentProvider {
             }
             case POPULAR_WITH_ID:
             {
-                Log.d("MovieProvider_POP",uri.toString());
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieContract.PopularEntry.TABLE_NAME,
                         projection,

@@ -140,6 +140,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             Log.d("Detail","Favorite insert fail");
     }
 
+    private void deleteFavorite(){
+        int rowsDeteleted = getActivity().getContentResolver().delete(
+                MovieContract.FavoriteEntry.CONTENT_URI,
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + "= ?",
+                new String[]{sMovieId}
+                );
+        Log.d("Detail Delete",Integer.toString(rowsDeteleted));
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -147,7 +156,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         if (intent == null) {
             return null;
         }
-        int position = intent.getIntExtra("position",0);
+        String movieId = intent.getStringExtra("movieId");
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
 
@@ -155,28 +164,28 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             case "popularity.desc":
                 return new CursorLoader(
                         getActivity(),
-                        intent.getData(),
+                        MovieContract.PopularEntry.CONTENT_URI,
                         POP_COLUMNS,
-                        MovieContract.PopularEntry._ID + " = ? ",
-                        new String[]{Integer.toString(position+1)},
+                        MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{movieId},
                         null
                 );
             case "vote_average.desc":
                 return new CursorLoader(
                         getActivity(),
-                        intent.getData(),
+                        MovieContract.RatingEntry.CONTENT_URI,
                         RATING_COLUMNS,
-                        MovieContract.PopularEntry._ID + " = ? ",
-                        new String[]{Integer.toString(position+1)},
+                        MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{movieId},
                         null
                 );
             case "Favorite":
                 return new CursorLoader(
                         getActivity(),
-                        intent.getData(),
+                        MovieContract.FavoriteEntry.CONTENT_URI,
                         FAVORITE_COLUMNS,
-                        MovieContract.PopularEntry._ID + " = ? ",
-                        new String[]{Integer.toString(position+1)},
+                        MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{movieId},
                         null
                 );
             default:
@@ -195,6 +204,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             Log.d("Detail","data is null");
             return;
         }
+        int id = data.getInt(data.getColumnIndex(MovieContract.FavoriteEntry._ID));
+        Log.d("Detail _id",Integer.toString(id));
 
         sMovieId = data.getString(COL_MOVIE_ID);
         sMovieTitle = data.getString(COL_TITLE);
@@ -226,7 +237,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 if (buttonView.isChecked()) {
                     insertFavorite();
                 } else {
-                    Log.d("onCreate", "not checked");
+                    deleteFavorite();
                 }
             }
         });
@@ -236,6 +247,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         ratings.setText(sVoteAverage);
         overview.setText(sPlotSynopsis);
         Picasso.with(getActivity()).load("file:/"+getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster).into(poster);
+
 
     }
 
