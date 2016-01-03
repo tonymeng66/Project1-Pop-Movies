@@ -196,6 +196,8 @@ import com.squareup.picasso.Target;
                 if(cursor.moveToPosition(position)){
                     movieId= cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_ID));
                 }
+                FetchReviewTask fetchTrailerReviewTask = new FetchReviewTask(getActivity());
+                fetchTrailerReviewTask.execute(movieId);
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra("movieId", movieId);
                 startActivity(intent);

@@ -170,7 +170,6 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_AUTHOR = "author";
         public static final String COLUMN_CONTENT = "content";
-        public static final String COLUMN_URL = "url";
 
 
         public static String getMovieIDFromUri(Uri uri) {

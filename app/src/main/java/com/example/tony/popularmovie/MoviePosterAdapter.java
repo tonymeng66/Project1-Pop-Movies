@@ -50,12 +50,20 @@ public class MoviePosterAdapter extends CursorAdapter {
     @TargetApi(11)
     public MoviePosterAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        if(c==null)
+            Log.d("MoviePosterAdapter","init cursor is null");
+        else
+            Log.d("MoviePosterAdapter","init cursor is not null");
         mContext = context;
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.image_view_in_grid, parent, false);
+        if(cursor==null)
+            Log.d("MoviePosterAdapter","newView cursor is null");
+        else
+            Log.d("MoviePosterAdapter","newView cursor is not null");
 
         return view;
     }
@@ -63,7 +71,7 @@ public class MoviePosterAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ImageView myView = (ImageView)view;
+        ImageView myView = (ImageView) view.findViewById(R.id.imageView);
         //Popular ,Ratings, Favorite tables share the same columns
         String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
         //int id = cursor.getInt(cursor.getColumnIndex(MovieContract.PopularEntry._ID));

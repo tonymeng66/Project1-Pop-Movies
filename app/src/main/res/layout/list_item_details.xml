@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- movie title-->
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:textSize="30sp"
+            android:textColor="#FFFFFF"
+            android:background="#007070"
+            android:paddingLeft="20dp"
+            android:gravity="center_vertical" />
+
+        <!-- movie poster ,release date and ratings-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="15dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/movie_poster"
+                    android:scaleType="fitXY"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/release_date"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/movie_ratings"/>
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox"
+                    android:text="Save As Favorite"/>
+            </LinearLayout>
+        </LinearLayout>
+        <!-- movie poster ,release date and ratings end-->
+
+        <!-- movie overview start-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/movie_overview"
+            android:paddingBottom="15dp"/>
+        <!-- movie overview end-->
+
+    </LinearLayout>
+
+</LinearLayout>

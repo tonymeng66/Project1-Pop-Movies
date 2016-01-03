@@ -79,7 +79,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " (" +
                 VideoEntry._ID + " INTEGER PRIMARY KEY ," +
-                VideoEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
+                VideoEntry.COLUMN_MOVIE_ID +" TEXT NOT NULL, "+
                 VideoEntry.COLUMN_KEY + " TEXT NOT NULL, " +
                 VideoEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                 VideoEntry.COLUMN_SITE + " TEXT NOT NULL, " +
@@ -89,10 +89,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME + " (" +
                 ReviewEntry._ID + " INTEGER PRIMARY KEY ," +
-                ReviewEntry.COLUMN_MOVIE_ID +" TEXT UNIQUE NOT NULL, "+
+                ReviewEntry.COLUMN_MOVIE_ID +" TEXT NOT NULL, "+
                 ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_URL + " TEXT NOT NULL " +
+                ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL " +
                 " );";
 
         sqLiteDatabase.execSQL(SQL_CREATE_POPULAR_TABLE);

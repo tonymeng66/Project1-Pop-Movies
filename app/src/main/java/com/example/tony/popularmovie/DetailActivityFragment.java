@@ -16,13 +16,12 @@
 
 package com.example.tony.popularmovie;
 
-import android.content.ContentResolver;
+import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Movie;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -36,12 +35,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.tony.popularmovie.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
-import java.security.KeyStore;
+import java.util.List;
 
 /**
  * Shows detail movie information when user click on the movie poster on the main page
@@ -52,18 +52,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public DetailActivityFragment() {    }
 
     private static final int DETAIL_LOADER = 0;
-    private static final int REVIEW_LOADER = 3;
-    private static final int TRAILER_LOADER = 4;
+    private static final int REVIEW_LOADER = 1;
+    private static final int TRAILER_LOADER = 2;
 
-    private static String sMovieId ;
-    private static String sMovieTitle ;
-    private static String sReleaseDate ;
-    private static String sMoviePoster ;
-    private static String sVoteAverage ;
-    private static String sPlotSynopsis ;
-    private static String sPopularity ;
+    private static String sMovieId;
+    private static String sMovieTitle;
+    private static String sReleaseDate;
+    private static String sMoviePoster;
+    private static String sVoteAverage;
+    private static String sPlotSynopsis;
+    private static String sPopularity;
+
 
     public static String PREFS_NAME = "SORT_BY";
+
+    private DetailsAdapter mDetailsAdapter;
 
     private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
 
@@ -97,6 +100,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,
             MovieContract.FavoriteEntry.COLUMN_POPULARITY
     };
+    private static final String[] REVIEW_COLUMNS = {
+            MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID ,
+            MovieContract.ReviewEntry.COLUMN_MOVIE_ID,
+            MovieContract.ReviewEntry.COLUMN_AUTHOR,
+            MovieContract.ReviewEntry.COLUMN_CONTENT
+    };
+
 
     static final int COL_ID = 0;
     static final int COL_MOVIE_ID = 1;
@@ -107,17 +117,33 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     static final int COL_PLOT = 6;
     static final int COL_POPULARITY = 7;
 
+    static final int COL_AUTHOR = 2;
+    static final int COL_CONTENT = 3;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        getLoaderManager().initLoader(REVIEW_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        getLoaderManager().restartLoader(REVIEW_LOADER, null, this);
+        super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        mDetailsAdapter = new DetailsAdapter(getActivity(),null,0);
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        ListView listView = (ListView) rootView.findViewById(R.id.listview_details);
+        listView.setAdapter(mDetailsAdapter);
 
         return rootView;
     }
@@ -149,7 +175,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         Log.d("Detail Delete",Integer.toString(rowsDeteleted));
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Intent intent = getActivity().getIntent();
@@ -157,34 +182,49 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             return null;
         }
         String movieId = intent.getStringExtra("movieId");
-        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
-        String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
 
-        switch(sortBy){
-            case "popularity.desc":
+        switch(id) {
+            case DETAIL_LOADER:
+                SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+                String sortBy = settings.getString(PREFS_NAME, "popularity.desc");
+
+                switch (sortBy) {
+                    case "popularity.desc":
+                        return new CursorLoader(
+                                getActivity(),
+                                MovieContract.PopularEntry.CONTENT_URI,
+                                POP_COLUMNS,
+                                MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                                new String[]{movieId},
+                                null
+                         );
+                    case "vote_average.desc":
+                        return new CursorLoader(
+                                getActivity(),
+                                MovieContract.RatingEntry.CONTENT_URI,
+                                RATING_COLUMNS,
+                                MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                                new String[]{movieId},
+                                null
+                        );
+                    case "Favorite":
+                        return new CursorLoader(
+                                getActivity(),
+                                MovieContract.FavoriteEntry.CONTENT_URI,
+                                FAVORITE_COLUMNS,
+                                MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                                new String[]{movieId},
+                                null
+                        );
+                    default:
+                        return null;
+                }
+            case REVIEW_LOADER:
                 return new CursorLoader(
                         getActivity(),
-                        MovieContract.PopularEntry.CONTENT_URI,
-                        POP_COLUMNS,
-                        MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                        new String[]{movieId},
-                        null
-                );
-            case "vote_average.desc":
-                return new CursorLoader(
-                        getActivity(),
-                        MovieContract.RatingEntry.CONTENT_URI,
-                        RATING_COLUMNS,
-                        MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                        new String[]{movieId},
-                        null
-                );
-            case "Favorite":
-                return new CursorLoader(
-                        getActivity(),
-                        MovieContract.FavoriteEntry.CONTENT_URI,
-                        FAVORITE_COLUMNS,
-                        MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                        MovieContract.ReviewEntry.CONTENT_URI,
+                        REVIEW_COLUMNS,
+                        MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? ",
                         new String[]{movieId},
                         null
                 );
@@ -193,66 +233,95 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
     }
 
+    @TargetApi(11)
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        TextView title = (TextView)getActivity().findViewById(R.id.movie_title);
-        TextView ratings = (TextView)getActivity().findViewById(R.id.movie_ratings);
-        TextView overview = (TextView)getActivity().findViewById(R.id.movie_overview);
-        ImageView poster = (ImageView) getActivity().findViewById(R.id.movie_poster);
 
-        if (!data.moveToFirst()) {
-            Log.d("Detail","data is null");
-            return;
-        }
-        int id = data.getInt(data.getColumnIndex(MovieContract.FavoriteEntry._ID));
-        Log.d("Detail _id",Integer.toString(id));
+        switch(loader.getId()) {
+            case DETAIL_LOADER:
 
-        sMovieId = data.getString(COL_MOVIE_ID);
-        sMovieTitle = data.getString(COL_TITLE);
-        sReleaseDate = data.getString(COL_RELEASE);
-        sMoviePoster = data.getString(COL_POSTER);
-        sVoteAverage = data.getString(COL_VOTE);
-        sPlotSynopsis = data.getString(COL_PLOT);
-        sPopularity = data.getString(COL_POPULARITY);
+                mDetailsAdapter.swapCursor(data);
 
-        CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.checkBox);
-        Log.d("Detail sID",sMovieId);
-        Cursor cursor = getActivity().getContentResolver().query(
-                MovieContract.FavoriteEntry.CONTENT_URI,
-                FAVORITE_COLUMNS,
-                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{sMovieId},
-                null
-        );
-        if(cursor.moveToFirst())
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
-
-        cursor.close();
-
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.isChecked()) {
-                    insertFavorite();
-                } else {
-                    deleteFavorite();
+                if (!data.moveToFirst()) {
+                    Log.d("Detail","data is null");
+                    return;
                 }
-            }
-        });
+                sMovieId = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_ID));
+                sMovieTitle = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_TITLE));
+                sReleaseDate = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_RELEASE_DATE));
+                sMoviePoster = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
+                sVoteAverage = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE));
+                sPlotSynopsis = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS));
+                sPopularity = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_POPULARITY));
+
+                CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.checkBox);
+                Cursor cursor = getActivity().getContentResolver().query(
+                        MovieContract.FavoriteEntry.CONTENT_URI,
+                        FAVORITE_COLUMNS,
+                        MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{sMovieId},
+                        null
+                );
+                //if (cursor.moveToFirst())
+                  //  checkBox.setChecked(true);
+                //else
+                  //  checkBox.setChecked(false);
+
+                cursor.close();
+
+                /*checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (buttonView.isChecked()) {
+                            insertFavorite();
+                        } else {
+                            deleteFavorite();
+                        }
+                    }
+                });*/
+
+                break;
+            case REVIEW_LOADER:
+                //TextView author1 = (TextView) getActivity().findViewById(R.id.author1);
+                //TextView review1 = (TextView) getActivity().findViewById(R.id.review1);
+                //TextView author2 = (TextView) getActivity().findViewById(R.id.author2);
+                //TextView review2 = (TextView) getActivity().findViewById(R.id.review2);
+                //TextView author3 = (TextView) getActivity().findViewById(R.id.author3);
+                //TextView review3 = (TextView) getActivity().findViewById(R.id.review3);
+                //TextView author4 = (TextView) getActivity().findViewById(R.id.author4);
+                //TextView review4 = (TextView) getActivity().findViewById(R.id.review4);
+                //TextView author5 = (TextView) getActivity().findViewById(R.id.author5);
+                //TextView review5 = (TextView) getActivity().findViewById(R.id.review5);
 
 
-        title.setText(sMovieTitle);
-        ratings.setText(sVoteAverage);
-        overview.setText(sPlotSynopsis);
-        Picasso.with(getActivity()).load("file://"+getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster).into(poster);
-
+                if(data.move(1)){
+                    //author1.setText(data.getString(COL_AUTHOR));
+                    //review1.setText(data.getString(COL_CONTENT));
+                }
+                if(data.move(2)){
+                    //author2.setText(data.getString(COL_AUTHOR));
+                    //review2.setText(data.getString(COL_CONTENT));
+                }
+                if(data.move(3)){
+                    //author3.setText(data.getString(COL_AUTHOR));
+                    //review3.setText(data.getString(COL_CONTENT));
+                }
+                if(data.move(4)){
+                    //author4.setText(data.getString(COL_AUTHOR));
+                    //review4.setText(data.getString(COL_CONTENT));
+                }
+                if(data.move(5)){
+                    //author5.setText(data.getString(COL_AUTHOR));
+                    //review5.setText(data.getString(COL_CONTENT));
+                }
+                break;
+        }
 
     }
 
+    @TargetApi(11)
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        mDetailsAdapter.swapCursor(null);
     }
 }

@@ -6,4 +6,10 @@
     <string name="refresh">Refresh</string>
     <string name="movie_ratings_max">/10</string>
     <string name="title_activity_detail">Movie Detail</string>
+    <string name="review1_title">Review 1: </string>
+    <string name="review2_title">Review 2: </string>
+    <string name="review3_title">Review 3: </string>
+    <string name="review4_title">Review 4: </string>
+    <string name="review5_title">Review 5: </string>
+    <string name="author_title">Author : </string>
 </resources>
