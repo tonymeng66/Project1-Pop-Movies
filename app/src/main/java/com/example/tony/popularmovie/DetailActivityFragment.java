@@ -55,15 +55,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final int REVIEW_LOADER = 1;
     private static final int TRAILER_LOADER = 2;
 
-    private static String sMovieId;
-    private static String sMovieTitle;
-    private static String sReleaseDate;
-    private static String sMoviePoster;
-    private static String sVoteAverage;
-    private static String sPlotSynopsis;
-    private static String sPopularity;
-
-
     public static String PREFS_NAME = "SORT_BY";
 
     private DetailsAdapter mDetailsAdapter;
@@ -148,32 +139,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         return rootView;
     }
 
-    private void insertFavorite(){
-        ContentValues contentValues = new ContentValues();
 
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,sMovieId);
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_TITLE,sMovieTitle);
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,sReleaseDate);
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_POSTER,sMoviePoster);
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,sVoteAverage);
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,sPlotSynopsis);
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_POPULARITY,sPopularity);
 
-        Uri uri = getActivity().getContentResolver().insert(MovieContract.FavoriteEntry.CONTENT_URI,contentValues);
-        long rowId = ContentUris.parseId(uri);
 
-        if(rowId==-1)
-            Log.d("Detail","Favorite insert fail");
-    }
-
-    private void deleteFavorite(){
-        int rowsDeteleted = getActivity().getContentResolver().delete(
-                MovieContract.FavoriteEntry.CONTENT_URI,
-                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + "= ?",
-                new String[]{sMovieId}
-                );
-        Log.d("Detail Delete",Integer.toString(rowsDeteleted));
-    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -182,6 +150,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             return null;
         }
         String movieId = intent.getStringExtra("movieId");
+        mDetailsAdapter.setmMovieId(movieId);
 
         switch(id) {
             case DETAIL_LOADER:
@@ -246,28 +215,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     Log.d("Detail","data is null");
                     return;
                 }
-                sMovieId = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_ID));
-                sMovieTitle = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_TITLE));
-                sReleaseDate = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_RELEASE_DATE));
-                sMoviePoster = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
-                sVoteAverage = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_VOTE_AVERAGE));
-                sPlotSynopsis = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_PLOT_SYNOPSYS));
-                sPopularity = data.getString(data.getColumnIndex(MovieContract.PopularEntry.COLUMN_POPULARITY));
 
-                CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.checkBox);
-                Cursor cursor = getActivity().getContentResolver().query(
+
+                /*Cursor cursor = getActivity().getContentResolver().query(
                         MovieContract.FavoriteEntry.CONTENT_URI,
                         FAVORITE_COLUMNS,
                         MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ? ",
                         new String[]{sMovieId},
                         null
-                );
+                );*/
                 //if (cursor.moveToFirst())
                   //  checkBox.setChecked(true);
                 //else
                   //  checkBox.setChecked(false);
 
-                cursor.close();
+                //cursor.close();
 
                 /*checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
