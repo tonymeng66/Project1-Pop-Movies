@@ -33,15 +33,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.tony.popularmovie.data.MovieContract;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 /**
  * Shows detail movie information when user click on the movie poster on the main page
@@ -57,7 +54,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     public static String PREFS_NAME = "SORT_BY";
 
-    private DetailsAdapter mDetailsAdapter;
+    private ReviewAdapter mReviewAdapter;
+    private String mMovieId;
 
     private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
 
@@ -111,6 +109,14 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     static final int COL_AUTHOR = 2;
     static final int COL_CONTENT = 3;
 
+    private static String sMovieId ;
+    private static String sMovieTitle ;
+    private static String sReleaseDate ;
+    private static String sMoviePoster ;
+    private static String sVoteAverage ;
+    private static String sPlotSynopsis ;
+    private static String sPopularity ;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
@@ -128,15 +134,47 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Intent intent = getActivity().getIntent();
+        if (intent == null) {
+            return null;
+        }
+        mMovieId = intent.getStringExtra("movieId");
 
-        mDetailsAdapter = new DetailsAdapter(getActivity(),null,0);
+        mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_details);
-        listView.setAdapter(mDetailsAdapter);
+        ListView listView = (ListView) rootView.findViewById(R.id.review_list);
+        listView.setAdapter(mReviewAdapter);
 
         return rootView;
+    }
+
+    private void insertFavorite(){
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,sMovieId);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_TITLE,sMovieTitle);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,sReleaseDate);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_POSTER,sMoviePoster);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,sVoteAverage);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,sPlotSynopsis);
+        contentValues.put(MovieContract.FavoriteEntry.COLUMN_POPULARITY, sPopularity);
+
+        Uri uri = getActivity().getContentResolver().insert(MovieContract.FavoriteEntry.CONTENT_URI, contentValues);
+        long rowId = ContentUris.parseId(uri);
+
+        if(rowId==-1)
+            Log.d("Detail","Favorite insert fail");
+    }
+
+    private void deleteFavorite(){
+        int rowsDeteleted = getActivity().getContentResolver().delete(
+                MovieContract.FavoriteEntry.CONTENT_URI,
+                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + "= ?",
+                new String[]{mMovieId}
+        );
+        Log.d("Detail Delete", Integer.toString(rowsDeteleted));
     }
 
 
@@ -145,12 +183,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            return null;
-        }
-        String movieId = intent.getStringExtra("movieId");
-        mDetailsAdapter.setmMovieId(movieId);
 
         switch(id) {
             case DETAIL_LOADER:
@@ -164,7 +196,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                 MovieContract.PopularEntry.CONTENT_URI,
                                 POP_COLUMNS,
                                 MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                                new String[]{movieId},
+                                new String[]{mMovieId},
                                 null
                          );
                     case "vote_average.desc":
@@ -173,7 +205,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                 MovieContract.RatingEntry.CONTENT_URI,
                                 RATING_COLUMNS,
                                 MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                                new String[]{movieId},
+                                new String[]{mMovieId},
                                 null
                         );
                     case "Favorite":
@@ -182,7 +214,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                 MovieContract.FavoriteEntry.CONTENT_URI,
                                 FAVORITE_COLUMNS,
                                 MovieContract.PopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                                new String[]{movieId},
+                                new String[]{mMovieId},
                                 null
                         );
                     default:
@@ -194,7 +226,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         MovieContract.ReviewEntry.CONTENT_URI,
                         REVIEW_COLUMNS,
                         MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? ",
-                        new String[]{movieId},
+                        new String[]{mMovieId},
                         null
                 );
             default:
@@ -209,73 +241,59 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         switch(loader.getId()) {
             case DETAIL_LOADER:
 
-                mDetailsAdapter.swapCursor(data);
-
-                if (!data.moveToFirst()) {
-                    Log.d("Detail","data is null");
+                if(!data.moveToFirst())
                     return;
-                }
 
+                sMovieId = data.getString(COL_MOVIE_ID);
+                sMovieTitle = data.getString(COL_TITLE) ;
+                sReleaseDate = data.getString(COL_RELEASE);
+                sMoviePoster = data.getString(COL_POSTER);
+                sVoteAverage = data.getString(COL_VOTE);
+                sPlotSynopsis = data.getString(COL_PLOT);
+                sPopularity = data.getString(COL_POPULARITY);
 
-                /*Cursor cursor = getActivity().getContentResolver().query(
+                TextView movie_title = (TextView) getActivity().findViewById(R.id.movie_title);
+                TextView movie_ratings = (TextView) getActivity().findViewById(R.id.movie_ratings);
+                TextView movie_overview = (TextView) getActivity().findViewById(R.id.movie_overview);
+                ImageView movie_poster = (ImageView) getActivity().findViewById(R.id.movie_poster);
+                CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.checkBox);
+
+                Cursor cursor = getActivity().getContentResolver().query(
                         MovieContract.FavoriteEntry.CONTENT_URI,
                         FAVORITE_COLUMNS,
                         MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ? ",
-                        new String[]{sMovieId},
+                        new String[]{mMovieId},
                         null
-                );*/
-                //if (cursor.moveToFirst())
-                  //  checkBox.setChecked(true);
-                //else
-                  //  checkBox.setChecked(false);
+                );
+                if (cursor.moveToFirst())
+                    checkBox.setChecked(true);
+                else
+                    checkBox.setChecked(false);
 
-                //cursor.close();
+                cursor.close();
 
-                /*checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                checkBox.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (buttonView.isChecked()) {
+                    public void onClick(View v) {
+                        CheckBox c = (CheckBox) v;
+                        if (c.isChecked()) {
                             insertFavorite();
                         } else {
                             deleteFavorite();
                         }
                     }
-                });*/
+                });
+
+                movie_title.setText(sMovieTitle);
+                movie_ratings.setText(sVoteAverage);
+                movie_overview.setText(sPlotSynopsis);
+                Picasso.with(getActivity())
+                        .load("file://" + getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster)
+                        .into(movie_poster);
 
                 break;
             case REVIEW_LOADER:
-                //TextView author1 = (TextView) getActivity().findViewById(R.id.author1);
-                //TextView review1 = (TextView) getActivity().findViewById(R.id.review1);
-                //TextView author2 = (TextView) getActivity().findViewById(R.id.author2);
-                //TextView review2 = (TextView) getActivity().findViewById(R.id.review2);
-                //TextView author3 = (TextView) getActivity().findViewById(R.id.author3);
-                //TextView review3 = (TextView) getActivity().findViewById(R.id.review3);
-                //TextView author4 = (TextView) getActivity().findViewById(R.id.author4);
-                //TextView review4 = (TextView) getActivity().findViewById(R.id.review4);
-                //TextView author5 = (TextView) getActivity().findViewById(R.id.author5);
-                //TextView review5 = (TextView) getActivity().findViewById(R.id.review5);
-
-
-                if(data.move(1)){
-                    //author1.setText(data.getString(COL_AUTHOR));
-                    //review1.setText(data.getString(COL_CONTENT));
-                }
-                if(data.move(2)){
-                    //author2.setText(data.getString(COL_AUTHOR));
-                    //review2.setText(data.getString(COL_CONTENT));
-                }
-                if(data.move(3)){
-                    //author3.setText(data.getString(COL_AUTHOR));
-                    //review3.setText(data.getString(COL_CONTENT));
-                }
-                if(data.move(4)){
-                    //author4.setText(data.getString(COL_AUTHOR));
-                    //review4.setText(data.getString(COL_CONTENT));
-                }
-                if(data.move(5)){
-                    //author5.setText(data.getString(COL_AUTHOR));
-                    //review5.setText(data.getString(COL_CONTENT));
-                }
+                mReviewAdapter.swapCursor(data);
                 break;
         }
 
@@ -284,6 +302,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @TargetApi(11)
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mDetailsAdapter.swapCursor(null);
+        mReviewAdapter.swapCursor(null);
     }
 }

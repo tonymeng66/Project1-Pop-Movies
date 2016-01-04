@@ -39,13 +39,12 @@ import com.squareup.picasso.Picasso;
  */
 
 
-public class DetailsAdapter extends CursorAdapter {
+public class ReviewAdapter extends CursorAdapter {
 
     private static final int VIEW_TYPE_COUNT = 2;
 
-    private static final int VIEW_TYPE_DETAIL = 0;
-    private static final int VIEW_TYPE_TRAILER = 1;
-    private static final int VIEW_TYPE_REVIEW = 2;
+    private static final int VIEW_TYPE_TRAILER = 0;
+    private static final int VIEW_TYPE_REVIEW = 1;
 
     private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -110,7 +109,6 @@ public class DetailsAdapter extends CursorAdapter {
         public final TextView movie_overview;
 
         public final TextView review_title;
-        public final TextView by;
         public final TextView author;
 
         public ViewHolder(View view) {
@@ -124,13 +122,12 @@ public class DetailsAdapter extends CursorAdapter {
             movie_overview = (TextView) view.findViewById(R.id.movie_overview);
 
             review_title = (TextView) view.findViewById(R.id.review_title);
-            by = (TextView) view.findViewById(R.id.by);
             author = (TextView) view.findViewById(R.id.author);
         }
     }
 
     @TargetApi(11)
-    public DetailsAdapter(Context context, Cursor c, int flags) {
+    public ReviewAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
     }
@@ -142,10 +139,7 @@ public class DetailsAdapter extends CursorAdapter {
         int viewType = getItemViewType(cursor.getPosition());
         int layoutId = -1;
         switch (viewType) {
-            case VIEW_TYPE_DETAIL: {
-                layoutId = R.layout.list_item_details;
-                break;
-            }
+
             case VIEW_TYPE_REVIEW:
             default:{
                 layoutId = R.layout.list_item_review;
@@ -158,8 +152,6 @@ public class DetailsAdapter extends CursorAdapter {
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
 
-        Log.d("newView:","newView");
-
         return view;
     }
 
@@ -170,48 +162,10 @@ public class DetailsAdapter extends CursorAdapter {
 
         int viewType = getItemViewType(cursor.getPosition());
         switch (viewType) {
-            case VIEW_TYPE_DETAIL: {
-                viewHolder.movie_title.setText(cursor.getString(COL_TITLE));
-                viewHolder.movie_ratings.setText(cursor.getString(COL_VOTE));
-                viewHolder.movie_overview.setText(cursor.getString(COL_PLOT));
-
-                Cursor data = mContext.getContentResolver().query(
-                        MovieContract.FavoriteEntry.CONTENT_URI,
-                        FAVORITE_COLUMNS,
-                        MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ? ",
-                        new String[]{getmMovieId()},
-                        null
-                );
-                if (data.moveToFirst())
-                    viewHolder.checkBox.setChecked(true);
-                else
-                    viewHolder.checkBox.setChecked(false);
-
-                data.close();
-
-                viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CheckBox c = (CheckBox) v;
-                        if (c.isChecked()) {
-                            insertFavorite(cursor);
-                        } else {
-                            deleteFavorite();
-                        }
-                    }
-                });
-
-                String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_POSTER));
-                Picasso.with(context)
-                        .load("file://" + context.getExternalCacheDir().getAbsolutePath() + posterPath)
-                        .into(viewHolder.movie_poster);
-                break;
-            }
             case VIEW_TYPE_REVIEW:
             default:{
-                viewHolder.review_title.setText("Review:");
-                viewHolder.by.setText("by:");
-                viewHolder.author.setText(cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_CONTENT)));
+                viewHolder.review_title.setText("Review by:");
+                viewHolder.author.setText(cursor.getString(COL_AUTHOR));
                 break;
             }
         }
@@ -220,7 +174,12 @@ public class DetailsAdapter extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? VIEW_TYPE_DETAIL : VIEW_TYPE_REVIEW;
+        int viewType;
+
+
+            viewType = VIEW_TYPE_REVIEW;
+
+        return viewType;
     }
 
     @Override
@@ -228,32 +187,7 @@ public class DetailsAdapter extends CursorAdapter {
         return VIEW_TYPE_COUNT;
     }
 
-    private void insertFavorite(Cursor cursor){
-        ContentValues contentValues = new ContentValues();
 
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_ID,cursor.getString(COL_MOVIE_ID));
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_TITLE,cursor.getString(COL_TITLE));
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_RELEASE_DATE,cursor.getString(COL_RELEASE));
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_MOVIE_POSTER,cursor.getString(COL_POSTER));
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_VOTE_AVERAGE,cursor.getString(COL_VOTE));
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,cursor.getString(COL_PLOT));
-        contentValues.put(MovieContract.FavoriteEntry.COLUMN_POPULARITY, cursor.getString(COL_POPULARITY));
-
-        Uri uri = mContext.getContentResolver().insert(MovieContract.FavoriteEntry.CONTENT_URI, contentValues);
-        long rowId = ContentUris.parseId(uri);
-
-        if(rowId==-1)
-            Log.d("Detail","Favorite insert fail");
-    }
-
-    private void deleteFavorite(){
-        int rowsDeteleted = mContext.getContentResolver().delete(
-                MovieContract.FavoriteEntry.CONTENT_URI,
-                MovieContract.FavoriteEntry.COLUMN_MOVIE_ID + "= ?",
-                new String[]{mMovieId}
-        );
-        Log.d("Detail Delete", Integer.toString(rowsDeteleted));
-    }
     public String getmMovieId(){
         return mMovieId;
     }
