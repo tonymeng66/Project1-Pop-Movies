@@ -117,6 +117,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static String sPlotSynopsis ;
     private static String sPopularity ;
 
+    private TextView mTitle;
+    private TextView mReleaseDate;
+    private TextView mRatings;
+    private TextView mOverview;
+    private ImageView mPoster;
+    private CheckBox mCheckBox;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
@@ -143,8 +150,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.list_view_header, null);
+
+        mTitle = (TextView) headerView.findViewById(R.id.movie_title);
+        mReleaseDate = (TextView) headerView.findViewById(R.id.release_date);
+        mRatings = (TextView) headerView.findViewById(R.id.movie_ratings);
+        mOverview = (TextView) headerView.findViewById(R.id.movie_overview);
+        mPoster = (ImageView) headerView.findViewById(R.id.movie_poster);
+        mCheckBox = (CheckBox) headerView.findViewById(R.id.checkBox);
 
         ListView listView = (ListView) rootView.findViewById(R.id.review_list);
+        listView.addHeaderView(headerView);
         listView.setAdapter(mReviewAdapter);
 
         return rootView;
@@ -252,12 +268,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 sPlotSynopsis = data.getString(COL_PLOT);
                 sPopularity = data.getString(COL_POPULARITY);
 
-                TextView movie_title = (TextView) getActivity().findViewById(R.id.movie_title);
-                TextView movie_ratings = (TextView) getActivity().findViewById(R.id.movie_ratings);
-                TextView movie_overview = (TextView) getActivity().findViewById(R.id.movie_overview);
-                ImageView movie_poster = (ImageView) getActivity().findViewById(R.id.movie_poster);
-                CheckBox checkBox = (CheckBox) getActivity().findViewById(R.id.checkBox);
-
                 Cursor cursor = getActivity().getContentResolver().query(
                         MovieContract.FavoriteEntry.CONTENT_URI,
                         FAVORITE_COLUMNS,
@@ -266,13 +276,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         null
                 );
                 if (cursor.moveToFirst())
-                    checkBox.setChecked(true);
+                    mCheckBox.setChecked(true);
                 else
-                    checkBox.setChecked(false);
+                    mCheckBox.setChecked(false);
 
                 cursor.close();
 
-                checkBox.setOnClickListener(new View.OnClickListener() {
+                mCheckBox.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         CheckBox c = (CheckBox) v;
@@ -284,12 +294,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     }
                 });
 
-                movie_title.setText(sMovieTitle);
-                movie_ratings.setText(sVoteAverage);
-                movie_overview.setText(sPlotSynopsis);
+                mTitle.setText(sMovieTitle);
+                mReleaseDate.setText(sReleaseDate);
+                mRatings.setText(sVoteAverage);
+                mOverview.setText(sPlotSynopsis);
                 Picasso.with(getActivity())
                         .load("file://" + getActivity().getExternalCacheDir().getAbsolutePath() + sMoviePoster)
-                        .into(movie_poster);
+                        .into(mPoster);
 
                 break;
             case REVIEW_LOADER:
