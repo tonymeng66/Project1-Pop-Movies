@@ -39,12 +39,9 @@ import com.squareup.picasso.Picasso;
  */
 
 
-public class ReviewAdapter extends CursorAdapter {
+public class TrailerAdapter extends CursorAdapter {
 
-    private static final int VIEW_TYPE_COUNT = 2;
 
-    private static final int VIEW_TYPE_TRAILER = 0;
-    private static final int VIEW_TYPE_REVIEW = 1;
 
     private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -82,6 +79,16 @@ public class ReviewAdapter extends CursorAdapter {
             MovieContract.ReviewEntry.COLUMN_AUTHOR,
             MovieContract.ReviewEntry.COLUMN_CONTENT
     };
+    private static final String[] TRAILER_COLUMNS = {
+            MovieContract.VideoEntry.TABLE_NAME + "." + MovieContract.VideoEntry._ID ,
+            MovieContract.VideoEntry.COLUMN_MOVIE_ID,
+            MovieContract.VideoEntry.COLUMN_KEY,
+            MovieContract.VideoEntry.COLUMN_NAME,
+            MovieContract.VideoEntry.COLUMN_SITE,
+            MovieContract.VideoEntry.COLUMN_SIZE,
+            MovieContract.VideoEntry.COLUMN_TYPE,
+    };
+
 
 
     static final int COL_ID = 0;
@@ -93,8 +100,11 @@ public class ReviewAdapter extends CursorAdapter {
     static final int COL_PLOT = 6;
     static final int COL_POPULARITY = 7;
 
-    static final int COL_AUTHOR = 2;
-    static final int COL_CONTENT = 3;
+    static final int COL_KEY = 2;
+    static final int COL_NAME = 3;
+    static final int COL_SITE = 4;
+    static final int COL_SIZE = 5;
+    static final int COL_TYPE = 6;
 
 
     private final Context mContext;
@@ -102,32 +112,15 @@ public class ReviewAdapter extends CursorAdapter {
 
     public static class ViewHolder {
 
-        public final TextView movie_title;
-        public final ImageView movie_poster;
-        public final TextView movie_ratings;
-        public final CheckBox checkBox;
-        public final TextView movie_overview;
-
-        public final TextView review_title;
-        public final TextView author;
+        public final TextView trailer_name;
 
         public ViewHolder(View view) {
-
-            movie_title = (TextView) view.findViewById(R.id.movie_title);
-            movie_poster = (ImageView) view.findViewById(R.id.movie_poster);
-            movie_ratings = (TextView) view.findViewById(R.id.movie_ratings);
-            checkBox = (CheckBox) view.findViewById(R.id.checkBox);
-
-
-            movie_overview = (TextView) view.findViewById(R.id.movie_overview);
-
-            review_title = (TextView) view.findViewById(R.id.review_title);
-            author = (TextView) view.findViewById(R.id.author);
+            trailer_name = (TextView) view.findViewById(R.id.trailer_name);
         }
     }
 
     @TargetApi(11)
-    public ReviewAdapter(Context context, Cursor c, int flags) {
+    public TrailerAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
     }
@@ -136,18 +129,7 @@ public class ReviewAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         // Choose the layout type
 
-        int viewType = getItemViewType(cursor.getPosition());
-        int layoutId = -1;
-        switch (viewType) {
-
-            case VIEW_TYPE_REVIEW:
-            default:{
-                layoutId = R.layout.list_item_review;
-                break;
-            }
-        }
-
-        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item_trailer, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
@@ -160,38 +142,8 @@ public class ReviewAdapter extends CursorAdapter {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        int viewType = getItemViewType(cursor.getPosition());
-        switch (viewType) {
-            case VIEW_TYPE_REVIEW:
-            default:{
-                viewHolder.review_title.setText("Review by:");
-                viewHolder.author.setText(cursor.getString(COL_AUTHOR));
-                break;
-            }
-        }
-        Log.d("bindView:","bindView");
+        viewHolder.trailer_name.setText(cursor.getString(COL_NAME));
+
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        int viewType;
-
-
-            viewType = VIEW_TYPE_REVIEW;
-
-        return viewType;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return VIEW_TYPE_COUNT;
-    }
-
-
-    public String getmMovieId(){
-        return mMovieId;
-    }
-    public void setmMovieId(String movieId){
-        mMovieId = movieId;
-    }
 }

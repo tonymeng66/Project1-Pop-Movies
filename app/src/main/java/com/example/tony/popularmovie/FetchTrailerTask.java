@@ -29,13 +29,13 @@ import java.util.Vector;
 /**
  * Created by Tony on 2015/11/25.
  */
-public class FetchReviewTask extends AsyncTask<String,Void,Void> {
+public class FetchTrailerTask extends AsyncTask<String,Void,Void> {
 
     private final String LOG_TAG = FetchReviewTask.class.getSimpleName();
 
     private final Context mContext;
 
-    public FetchReviewTask(Context context)
+    public FetchTrailerTask(Context context)
     {
         mContext= context;
     }
@@ -47,35 +47,38 @@ public class FetchReviewTask extends AsyncTask<String,Void,Void> {
 
         final String ARRAY = "results";
         final String MOVIE_ID = "id";
-        final String AUTHOR = "author";
-        final String CONTENT = "content";
-        final String TOTAL_RESULTS = "total_results";
+        final String KEY = "key";
+        final String NAME = "name";
+        final String SITE = "site";
+        final String SIZE = "size";
+        final String TYPE = "type";
 
         try{
             JSONObject movieInfoJSON = new JSONObject(movieJsonStr);
 
-            int reviewCount = movieInfoJSON.getInt(TOTAL_RESULTS);
-            if (reviewCount > 5)
-                reviewCount=5;
-
-            Log.d(LOG_TAG,"reviewCount= " +reviewCount);
-
-            for(int i=0;i<reviewCount;i++) {
-                ContentValues reviewValues = new ContentValues();
+            for(int i=0;i<5;i++) {
+                ContentValues trailerValues = new ContentValues();
 
                 String movieId = movieInfoJSON.getString(MOVIE_ID);
-                String author = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(AUTHOR);
-                String content = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(CONTENT);
 
-                reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID,movieId);
-                reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR,author);
-                reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT,content);
+                String key = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(KEY);
+                String name = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(NAME);
+                String site = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(SITE);
+                String size = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(SIZE);
+                String type = movieInfoJSON.getJSONArray(ARRAY).getJSONObject(i).getString(TYPE);
+
+                trailerValues.put(MovieContract.VideoEntry.COLUMN_MOVIE_ID,movieId);
+                trailerValues.put(MovieContract.VideoEntry.COLUMN_KEY,key);
+                trailerValues.put(MovieContract.VideoEntry.COLUMN_NAME,name);
+                trailerValues.put(MovieContract.VideoEntry.COLUMN_SITE,site);
+                trailerValues.put(MovieContract.VideoEntry.COLUMN_SIZE,size);
+                trailerValues.put(MovieContract.VideoEntry.COLUMN_TYPE,type);
 
                 Uri uri = mContext.getContentResolver().insert(
-                        MovieContract.ReviewEntry.CONTENT_URI,
-                        reviewValues
+                        MovieContract.VideoEntry.CONTENT_URI,
+                        trailerValues
                 );
-                Log.d(LOG_TAG, "FetchReviewTask Complete. 1 Inserted ");
+                Log.d(LOG_TAG, "FetchTrailerTask Complete. 1 Inserted ");
             }
 
         }catch(JSONException e){
@@ -96,7 +99,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,Void> {
 
         try {
             final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
-            final String QUERY = "reviews";
+            final String QUERY = "videos";
             final String APIKEY ="829a2b250412b52d087fb34b2b9d64cb";
 
             Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
@@ -104,7 +107,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,Void> {
                     .appendPath(QUERY)
                     .appendQueryParameter("api_key", APIKEY)
                     .build();
-            Log.d("FetchReview/Uri",builtUri.toString());
+            Log.d("FetchTrailer/Uri",builtUri.toString());
 
             URL url = new URL(builtUri.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -133,7 +136,7 @@ public class FetchReviewTask extends AsyncTask<String,Void,Void> {
                 movieJsonStr = null;
             }
             movieJsonStr = buffer.toString();
-            Log.d("FetchReview",movieJsonStr);
+            Log.d("FetchTrailer",movieJsonStr);
             getDiscoverInfoFromJSON(movieJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage(), e);

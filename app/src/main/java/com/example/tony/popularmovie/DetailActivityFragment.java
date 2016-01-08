@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -54,7 +55,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     public static String PREFS_NAME = "SORT_BY";
 
-    private ReviewAdapter mReviewAdapter;
+    private TrailerAdapter mTrailerAdapter;
     private String mMovieId;
 
     private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
@@ -95,6 +96,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             MovieContract.ReviewEntry.COLUMN_AUTHOR,
             MovieContract.ReviewEntry.COLUMN_CONTENT
     };
+    private static final String[] VIDEO_COLUMNS = {
+            MovieContract.VideoEntry.TABLE_NAME + "." + MovieContract.VideoEntry._ID ,
+            MovieContract.VideoEntry.COLUMN_MOVIE_ID,
+            MovieContract.VideoEntry.COLUMN_KEY,
+            MovieContract.VideoEntry.COLUMN_NAME,
+            MovieContract.VideoEntry.COLUMN_SITE,
+            MovieContract.VideoEntry.COLUMN_SIZE,
+            MovieContract.VideoEntry.COLUMN_TYPE
+    };
 
 
     static final int COL_ID = 0;
@@ -109,6 +119,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     static final int COL_AUTHOR = 2;
     static final int COL_CONTENT = 3;
 
+    static final int COL_KEY = 2;
+    static final int COL_NAME = 3;
+    static final int COL_SITE = 4;
+    static final int COL_SIZE = 5;
+    static final int COL_TYPE = 6;
+
+
     private static String sMovieId ;
     private static String sMovieTitle ;
     private static String sReleaseDate ;
@@ -116,6 +133,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static String sVoteAverage ;
     private static String sPlotSynopsis ;
     private static String sPopularity ;
+
+    private static String sKey;
 
     private TextView mTitle;
     private TextView mReleaseDate;
@@ -128,6 +147,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         getLoaderManager().initLoader(REVIEW_LOADER, null, this);
+        getLoaderManager().initLoader(TRAILER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -135,19 +155,22 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onResume() {
         getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         getLoaderManager().restartLoader(REVIEW_LOADER, null, this);
+        getLoaderManager().restartLoader(TRAILER_LOADER, null, this);
         super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+
         Intent intent = getActivity().getIntent();
         if (intent == null) {
             return null;
         }
         mMovieId = intent.getStringExtra("movieId");
 
-        mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
+        mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.list_view_header, null);
@@ -159,9 +182,18 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mPoster = (ImageView) headerView.findViewById(R.id.movie_poster);
         mCheckBox = (CheckBox) headerView.findViewById(R.id.checkBox);
 
-        ListView listView = (ListView) rootView.findViewById(R.id.review_list);
+        ListView listView = (ListView) rootView.findViewById(R.id.trailer_list);
         listView.addHeaderView(headerView);
-        listView.setAdapter(mReviewAdapter);
+        listView.setAdapter(mTrailerAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Uri uri = Uri.parse(BASE_YOUTUBE_URL + sKey);
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                getActivity().startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -245,6 +277,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         new String[]{mMovieId},
                         null
                 );
+            case TRAILER_LOADER:
+                return new CursorLoader(
+                        getActivity(),
+                        MovieContract.VideoEntry.CONTENT_URI,
+                        VIDEO_COLUMNS,
+                        MovieContract.VideoEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{mMovieId},
+                        null
+                );
+
             default:
                 return null;
         }
@@ -304,8 +346,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 break;
             case REVIEW_LOADER:
-                mReviewAdapter.swapCursor(data);
+                //mTrailerAdapter.swapCursor(data);
                 break;
+            case TRAILER_LOADER:
+                if(!data.moveToFirst())
+                    return;
+                sKey = data.getString(COL_KEY);
+                mTrailerAdapter.swapCursor(data);
+                break;
+
         }
 
     }
@@ -313,6 +362,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @TargetApi(11)
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mReviewAdapter.swapCursor(null);
+        mTrailerAdapter.swapCursor(null);
     }
 }

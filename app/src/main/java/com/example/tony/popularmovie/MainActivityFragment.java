@@ -82,6 +82,12 @@ import com.squareup.picasso.Target;
             MovieContract.FavoriteEntry.COLUMN_PLOT_SYNOPSYS,
             MovieContract.FavoriteEntry.COLUMN_POPULARITY
     };
+    private static final String[] REVIEW_COLUMNS = {
+            MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.FavoriteEntry._ID ,
+            MovieContract.ReviewEntry.COLUMN_MOVIE_ID,
+            MovieContract.ReviewEntry.COLUMN_AUTHOR,
+            MovieContract.ReviewEntry.COLUMN_CONTENT
+    };
 
 
     static final int COL_MOVIE_ID = 0;
@@ -196,8 +202,12 @@ import com.squareup.picasso.Target;
                 if(cursor.moveToPosition(position)){
                     movieId= cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_ID));
                 }
-                FetchReviewTask fetchTrailerReviewTask = new FetchReviewTask(getActivity());
-                fetchTrailerReviewTask.execute(movieId);
+
+                FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity());
+                FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
+                fetchTrailerTask.execute(movieId);
+                fetchReviewTask.execute(movieId);
+
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra("movieId", movieId);
                 startActivity(intent);

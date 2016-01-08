@@ -32,7 +32,7 @@ import com.example.tony.popularmovie.data.MovieContract.ReviewEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 6;
 
     static final String DATABASE_NAME = "movie.db";
 
@@ -52,8 +52,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 PopularEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
                 PopularEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
                 PopularEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
-                PopularEntry.COLUMN_POPULARITY + " TEXT NOT NULL " +
-                " );";
+                PopularEntry.COLUMN_POPULARITY + " TEXT NOT NULL, " +
+                "UNIQUE (" + PopularEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_RATING_TABLE = "CREATE TABLE " + RatingEntry.TABLE_NAME + " (" +
                 RatingEntry._ID + " INTEGER PRIMARY KEY ," +
@@ -63,8 +63,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 RatingEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
                 RatingEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
                 RatingEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
-                RatingEntry.COLUMN_POPULARITY + " TEXT NOT NULL " +
-                " );";
+                RatingEntry.COLUMN_POPULARITY + " TEXT NOT NULL, " +
+                "UNIQUE (" + RatingEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_FAVORITE_TABLE = "CREATE TABLE " + MovieContract.FavoriteEntry.TABLE_NAME + " (" +
                 FavoriteEntry._ID + " INTEGER PRIMARY KEY ," +
@@ -74,8 +74,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 FavoriteEntry.COLUMN_MOVIE_POSTER + " TEXT NOT NULL, " +
                 FavoriteEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
                 FavoriteEntry.COLUMN_PLOT_SYNOPSYS + " TEXT NOT NULL, " +
-                FavoriteEntry.COLUMN_POPULARITY + " TEXT NOT NULL " +
-                " );";
+                FavoriteEntry.COLUMN_POPULARITY + " TEXT NOT NULL, " +
+                "UNIQUE (" + FavoriteEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " (" +
                 VideoEntry._ID + " INTEGER PRIMARY KEY ," +
@@ -84,15 +84,15 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 VideoEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                 VideoEntry.COLUMN_SITE + " TEXT NOT NULL, " +
                 VideoEntry.COLUMN_SIZE + " TEXT NOT NULL, " +
-                VideoEntry.COLUMN_TYPE + " TEXT NOT NULL " +
-                " );";
+                VideoEntry.COLUMN_TYPE + " TEXT NOT NULL, " +
+                "UNIQUE (" + VideoEntry.COLUMN_MOVIE_ID + "," + VideoEntry.COLUMN_NAME + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME + " (" +
                 ReviewEntry._ID + " INTEGER PRIMARY KEY ," +
                 ReviewEntry.COLUMN_MOVIE_ID +" TEXT NOT NULL, "+
                 ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL " +
-                " );";
+                ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
+                "UNIQUE (" + ReviewEntry.COLUMN_MOVIE_ID + "," + ReviewEntry.COLUMN_AUTHOR + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_POPULAR_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RATING_TABLE);
