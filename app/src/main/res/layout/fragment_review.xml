@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.tony.popularmovie.detailActivityFragment"
-    tools:showIn="@layout/activity_detail">
+    tools:context="com.example.tony.popularmovie.ReviewActivityFragment"
+    tools:showIn="@layout/activity_review">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/trailer_list">
+        android:id="@+id/review_list">
     </ListView>
+
 
 </FrameLayout>

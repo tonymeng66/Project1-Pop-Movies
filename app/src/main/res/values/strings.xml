@@ -12,4 +12,6 @@
     <string name="review4_title">Review 4: </string>
     <string name="review5_title">Review 5: </string>
     <string name="author_title">Author : </string>
+    <string name="title_activity_review">ReviewActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

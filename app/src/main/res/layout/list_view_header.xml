@@ -37,7 +37,10 @@
                 android:id="@+id/movie_poster"
                 android:scaleType="fitXY"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:paddingRight="10dp"
+                android:clickable="false"
+                android:cropToPadding="false"
+                android:contextClickable="false" />
 
         </LinearLayout>
 
@@ -89,7 +92,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/movie_overview"
-        android:paddingBottom="15dp"/>
+        android:paddingBottom="10dp"/>
     <!-- movie overview end-->
 
 </LinearLayout>

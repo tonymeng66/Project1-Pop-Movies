@@ -34,7 +34,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -146,7 +148,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
-        getLoaderManager().initLoader(REVIEW_LOADER, null, this);
         getLoaderManager().initLoader(TRAILER_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -154,7 +155,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onResume() {
         getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
-        getLoaderManager().restartLoader(REVIEW_LOADER, null, this);
         getLoaderManager().restartLoader(TRAILER_LOADER, null, this);
         super.onResume();
     }
@@ -174,6 +174,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.list_view_header, null);
+        View footerView = LayoutInflater.from(getActivity()).inflate(R.layout.list_view_footer,null);
 
         mTitle = (TextView) headerView.findViewById(R.id.movie_title);
         mReleaseDate = (TextView) headerView.findViewById(R.id.release_date);
@@ -182,21 +183,31 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mPoster = (ImageView) headerView.findViewById(R.id.movie_poster);
         mCheckBox = (CheckBox) headerView.findViewById(R.id.checkBox);
 
-        ListView listView = (ListView) rootView.findViewById(R.id.trailer_list);
-        listView.addHeaderView(headerView);
-        listView.setAdapter(mTrailerAdapter);
+        ListView trailerListView = (ListView) rootView.findViewById(R.id.trailer_list);
+        trailerListView.addHeaderView(headerView);
+        trailerListView.addFooterView(footerView);
+        trailerListView.setAdapter(mTrailerAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        trailerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Uri uri = Uri.parse(BASE_YOUTUBE_URL + sKey);
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-                getActivity().startActivity(intent);
+                if(position == parent.getCount()-1){
+                    Intent intent = new Intent(getActivity(), ReviewActivity.class);
+                    intent.putExtra("movieID",mMovieId);
+                    getActivity().startActivity(intent);
+                }
+                else {
+                    Uri uri = Uri.parse(BASE_YOUTUBE_URL + sKey);
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                    getActivity().startActivity(intent);
+                }
+
             }
         });
 
         return rootView;
     }
+
 
     private void insertFavorite(){
         ContentValues contentValues = new ContentValues();
@@ -224,10 +235,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         );
         Log.d("Detail Delete", Integer.toString(rowsDeteleted));
     }
-
-
-
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -345,9 +352,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         .into(mPoster);
 
                 break;
-            case REVIEW_LOADER:
-                //mTrailerAdapter.swapCursor(data);
-                break;
             case TRAILER_LOADER:
                 if(!data.moveToFirst())
                     return;
@@ -356,7 +360,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 break;
 
         }
-
     }
 
     @TargetApi(11)

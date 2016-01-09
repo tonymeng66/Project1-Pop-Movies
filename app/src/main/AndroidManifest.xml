@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tony.popularmovie" >
+    package="com.example.tony.popularmovie">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permiision.WRITE_EXTERNAL_STORAGE"
-                                       android:maxSdkVersion="18"/>
+    <uses-permission
+        android:name="android.permiision.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,14 +27,20 @@
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.tony.popularmovie.MainActivity" />
         </activity>
+
         <provider
-            android:authorities="com.example.tony.popularmovie.app"
-            android:name=".data.MovieProvider" />
+            android:name=".data.MovieProvider"
+            android:authorities="com.example.tony.popularmovie.app" />
+
+        <activity
+            android:name=".ReviewActivity"
+            android:label="@string/title_activity_review"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

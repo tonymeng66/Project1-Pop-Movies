@@ -39,7 +39,7 @@ import com.squareup.picasso.Picasso;
  */
 
 
-public class TrailerAdapter extends CursorAdapter {
+public class ReviewAdapter extends CursorAdapter {
 
     private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -98,6 +98,9 @@ public class TrailerAdapter extends CursorAdapter {
     static final int COL_PLOT = 6;
     static final int COL_POPULARITY = 7;
 
+    static final int COL_AUTHOR = 2;
+    static final int COL_CONTENT = 3;
+
     static final int COL_KEY = 2;
     static final int COL_NAME = 3;
     static final int COL_SITE = 4;
@@ -110,15 +113,17 @@ public class TrailerAdapter extends CursorAdapter {
 
     public static class ViewHolder {
 
-        public final TextView trailer_name;
+        public final TextView author;
+        public final TextView content;
 
         public ViewHolder(View view) {
-            trailer_name = (TextView) view.findViewById(R.id.trailer_name);
+            author = (TextView) view.findViewById(R.id.author);
+            content = (TextView) view.findViewById(R.id.content);
         }
     }
 
     @TargetApi(11)
-    public TrailerAdapter(Context context, Cursor c, int flags) {
+    public ReviewAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
     }
@@ -127,7 +132,9 @@ public class TrailerAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         // Choose the layout type
 
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_trailer, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item_review, parent, false);
+
+        Log.d("ReviewAdapter","newView");
 
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
@@ -140,7 +147,10 @@ public class TrailerAdapter extends CursorAdapter {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.trailer_name.setText(cursor.getString(COL_NAME));
+        Log.d("ReviewAdapter","bindView");
+
+        viewHolder.author.setText(cursor.getString(COL_AUTHOR));
+        viewHolder.content.setText(cursor.getString(COL_CONTENT));
 
     }
 
