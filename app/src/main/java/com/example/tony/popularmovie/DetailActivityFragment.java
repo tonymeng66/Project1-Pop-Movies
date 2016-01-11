@@ -164,11 +164,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                              Bundle savedInstanceState) {
         final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
-        Intent intent = getActivity().getIntent();
+        /*Intent intent = getActivity().getIntent();
         if (intent == null) {
             return null;
         }
-        mMovieId = intent.getStringExtra("movieId");
+        mMovieId = intent.getStringExtra("movieId");*/
+
+        Cursor cursor = getActivity().getContentResolver().query(MovieContract.PopularEntry.CONTENT_URI,POP_COLUMNS,null,null,null);
+        if(cursor.moveToFirst())
+            mMovieId = cursor.getString(COL_MOVIE_ID);
+        cursor.close();
+        Log.d("DetailActivityFragment",mMovieId);
 
         mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
 
