@@ -16,6 +16,8 @@
 
 package com.example.tony.popularmovie;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,7 +34,7 @@ import android.widget.GridView;
 
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback{
 
     private boolean mTwoPane;
     private static final String DETAIL_FRAGMENT_TAG = "DFTAG";
@@ -56,15 +58,38 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
 
             }
-            Log.d("MainActivity","2pan is true");
         } else {
             mTwoPane = false;
-            Log.d("MainActivity","2pan is false");
             //getSupportActionBar().setElevation(0f);
         }
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
+    }
+
+    @Override
+    public void onItemSelected(String movieID) {
+        if (mTwoPane) {
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            Bundle args = new Bundle();
+            args.putString("movieID", movieID);
+
+
+            DetailActivityFragment fragment = new DetailActivityFragment();
+            fragment.setArguments(args);
+
+            Log.d("MainActivity fragment",fragment.getArguments().getString("movieID"));
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, fragment, DETAIL_FRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .putExtra("movieID",movieID);
+            startActivity(intent);
+        }
     }
 }

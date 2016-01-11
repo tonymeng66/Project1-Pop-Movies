@@ -58,7 +58,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public static String PREFS_NAME = "SORT_BY";
 
     private TrailerAdapter mTrailerAdapter;
-    private String mMovieId;
+    private String mMovieId = null;
 
     private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
 
@@ -164,17 +164,37 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                              Bundle savedInstanceState) {
         final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
-        /*Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            return null;
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+           mMovieId = arguments.getString("movieID");
         }
-        mMovieId = intent.getStringExtra("movieId");*/
+        else
+        {
+            SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+            String sortBy = settings.getString(PREFS_NAME, "popularity.desc");
+            Cursor cursor;
+            switch (sortBy){
+                case "popularity.desc":
+                    cursor = getActivity().getContentResolver().query(MovieContract.PopularEntry.CONTENT_URI,POP_COLUMNS,null,null,null);
+                    break;
+                case "vote_average.desc":
+                    cursor = getActivity().getContentResolver().query(MovieContract.RatingEntry.CONTENT_URI,RATING_COLUMNS,null,null,null);
+                    break;
+                case "Favorite":
+                    cursor = getActivity().getContentResolver().query(MovieContract.FavoriteEntry.CONTENT_URI,FAVORITE_COLUMNS,null,null,null);
+                    break;
+                default:
+                    cursor = null;
+                    break;
+            }
 
-        Cursor cursor = getActivity().getContentResolver().query(MovieContract.PopularEntry.CONTENT_URI,POP_COLUMNS,null,null,null);
-        if(cursor.moveToFirst())
-            mMovieId = cursor.getString(COL_MOVIE_ID);
-        cursor.close();
-        Log.d("DetailActivityFragment",mMovieId);
+            if(cursor.moveToFirst())
+                mMovieId = cursor.getString(COL_MOVIE_ID);
+            cursor.close();
+        }
+
+
+
 
         mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
 
@@ -249,6 +269,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             case DETAIL_LOADER:
                 SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
                 String sortBy = settings.getString(PREFS_NAME, "popularity.desc");
+
+                if(mMovieId == null)
+                    return null;
 
                 switch (sortBy) {
                     case "popularity.desc":

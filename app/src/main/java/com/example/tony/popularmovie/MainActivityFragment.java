@@ -184,6 +184,13 @@ import com.squareup.picasso.Target;
         return super.onOptionsItemSelected(item);
     }
 
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(String movieID);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 
@@ -208,9 +215,11 @@ import com.squareup.picasso.Target;
                 fetchTrailerTask.execute(movieId);
                 fetchReviewTask.execute(movieId);
 
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("movieId", movieId);
-                startActivity(intent);
+                ((Callback) getActivity()).onItemSelected(movieId);
+
+                //Intent intent = new Intent(getActivity(), DetailActivity.class);
+                //intent.putExtra("movieId", movieId);
+                //startActivity(intent);
             }
         });
 
