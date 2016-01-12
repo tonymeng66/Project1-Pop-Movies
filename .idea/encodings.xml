@@ -10,7 +10,12 @@
     <file url="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/tony/popularmovie/utils/PollingCheck.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/data/MovieContract.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/data/MovieDbHelper.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/sync/MovieAuthenticator.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/sync/MovieAuthenticatorService.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/sync/MovieSyncAdapter.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/tony/popularmovie/sync/MovieSyncService.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/xml/authenticator.xml" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/xml/syncadapter.xml" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
-

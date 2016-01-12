@@ -40,6 +40,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.tony.popularmovie.data.MovieContract;
+import com.example.tony.popularmovie.sync.MovieSyncAdapter;
 import com.squareup.picasso.Target;
 
 /**
@@ -103,10 +104,7 @@ import com.squareup.picasso.Target;
 
     public MainActivityFragment() {    }
 
-    public void updateMovieInfo(String sortby){
-        FetchMovieInfoTask movieTask = new FetchMovieInfoTask(getActivity());
-        movieTask.execute(sortby);
-    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -116,6 +114,9 @@ import com.squareup.picasso.Target;
 
     @Override
     public void onResume() {
+
+        MovieSyncAdapter.syncImmediately(getActivity());
+
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         String sortBy = settings.getString(PREFS_NAME,"popularity.desc");
 
@@ -175,12 +176,6 @@ import com.squareup.picasso.Target;
             getActivity().setTitle("Favorites");
             return true;
         }
-        if (id == R.id.refresh){
-            updateMovieInfo("popularity.desc");
-            updateMovieInfo("vote_average.desc");
-            int rowsdeleted = getActivity().getContentResolver().delete(MovieContract.FavoriteEntry.CONTENT_URI,null,null);
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -188,7 +183,7 @@ import com.squareup.picasso.Target;
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(String movieID);
+        void onItemSelected(String movieID);
     }
 
     @Override
@@ -210,16 +205,7 @@ import com.squareup.picasso.Target;
                     movieId= cursor.getString(cursor.getColumnIndex(MovieContract.PopularEntry.COLUMN_MOVIE_ID));
                 }
 
-                FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity());
-                FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
-                fetchTrailerTask.execute(movieId);
-                fetchReviewTask.execute(movieId);
-
                 ((Callback) getActivity()).onItemSelected(movieId);
-
-                //Intent intent = new Intent(getActivity(), DetailActivity.class);
-                //intent.putExtra("movieId", movieId);
-                //startActivity(intent);
             }
         });
 

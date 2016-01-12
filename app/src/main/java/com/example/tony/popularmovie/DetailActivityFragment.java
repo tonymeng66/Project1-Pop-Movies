@@ -191,7 +191,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             if(cursor.moveToFirst())
                 mMovieId = cursor.getString(COL_MOVIE_ID);
             cursor.close();
-            Log.d("DetailFragmengt on",mMovieId);
         }
 
 

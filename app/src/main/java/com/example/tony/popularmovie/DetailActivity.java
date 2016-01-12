@@ -41,7 +41,6 @@ public class DetailActivity extends AppCompatActivity {
 
             Bundle arguments = new Bundle();
             arguments.putString("movieID", getIntent().getStringExtra("movieID"));
-            Log.d("DetailActivity onC",getIntent().getStringExtra("movieID"));
 
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(arguments);

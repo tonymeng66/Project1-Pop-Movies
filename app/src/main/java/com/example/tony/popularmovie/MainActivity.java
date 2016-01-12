@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra("movieID",movieID);
-            Log.d("MainActivity",movieID);
             startActivity(intent);
         }
     }

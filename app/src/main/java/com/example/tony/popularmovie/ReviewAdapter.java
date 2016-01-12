@@ -134,8 +134,6 @@ public class ReviewAdapter extends CursorAdapter {
 
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_review, parent, false);
 
-        Log.d("ReviewAdapter","newView");
-
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
 
@@ -146,8 +144,6 @@ public class ReviewAdapter extends CursorAdapter {
     public void bindView(View view, Context context, final Cursor cursor) {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        Log.d("ReviewAdapter","bindView");
 
         viewHolder.author.setText(cursor.getString(COL_AUTHOR));
         viewHolder.content.setText(cursor.getString(COL_CONTENT));

@@ -14,4 +14,8 @@
     <string name="author_title">Author : </string>
     <string name="title_activity_review">ReviewActivity</string>
     <string name="action_settings">Settings</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">movie.example.com</string>
+    <string name="content_authority">com.example.tony.popularmovie.app</string>
 </resources>

@@ -115,14 +115,12 @@ public class ReviewActivityFragment extends Fragment implements LoaderManager.Lo
     @TargetApi(11)
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d("ReviewFragment","onLoadFinished");
         mReviewAdapter.swapCursor(data);
     }
 
     @TargetApi(11)
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.d("ReviewFragment","onLoadReset");
         mReviewAdapter.swapCursor(null);
     }
 }
