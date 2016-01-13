@@ -28,15 +28,18 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -49,11 +52,16 @@ import com.squareup.picasso.Picasso;
 
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public DetailActivityFragment() {    }
+    public DetailActivityFragment() {  }
 
     private static final int DETAIL_LOADER = 0;
     private static final int REVIEW_LOADER = 1;
     private static final int TRAILER_LOADER = 2;
+
+    private static final String MOVIE_SHARE_HASHTAG = " #Pop Movie";
+    private String mSharedTrailerURL;
+    private String mSharedTrailerTitle;
+    private ShareActionProvider mShareActionProvider;
 
     public static String PREFS_NAME = "SORT_BY";
 
@@ -61,6 +69,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private String mMovieId = null;
 
     private static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/w185/";
+    private final static String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
     private static final String[] POP_COLUMNS = {
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -153,16 +162,22 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onResume() {
         getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         getLoaderManager().restartLoader(TRAILER_LOADER, null, this);
+        setHasOptionsMenu(true);
         super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final String BASE_YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -192,9 +207,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 mMovieId = cursor.getString(COL_MOVIE_ID);
             cursor.close();
         }
-
-
-
 
         mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
 
@@ -234,6 +246,29 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_detail, menu);
+
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        // If onLoadFinished happens before this, we can go ahead and set the share intent now.
+        //if (mSharedTrailerURL != null) {
+            mShareActionProvider.setShareIntent(createShareForecastIntent());
+        //}
+    }
+
+    private Intent createShareForecastIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sMovieTitle + " trailer: " + BASE_YOUTUBE_URL + sKey);
+        return shareIntent;
+    }
 
     private void insertFavorite(){
         ContentValues contentValues = new ContentValues();
@@ -385,6 +420,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 if(!data.moveToFirst())
                     return;
                 sKey = data.getString(COL_KEY);
+                //mSharedTrailerURL = BASE_YOUTUBE_URL+sKey;
+                //mSharedTrailerTitle = sMovieTitle;
                 mTrailerAdapter.swapCursor(data);
                 break;
 

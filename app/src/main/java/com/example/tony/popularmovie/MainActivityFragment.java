@@ -115,7 +115,7 @@ import com.squareup.picasso.Target;
     @Override
     public void onResume() {
 
-        MovieSyncAdapter.syncImmediately(getActivity());
+        //MovieSyncAdapter.syncImmediately(getActivity());
 
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         String sortBy = settings.getString(PREFS_NAME,"popularity.desc");

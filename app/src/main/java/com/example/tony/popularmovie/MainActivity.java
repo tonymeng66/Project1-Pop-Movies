@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.example.tony.popularmovie.sync.MovieSyncAdapter;
 
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback{
@@ -53,14 +54,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                         .replace(R.id.movie_detail_container, new DetailActivityFragment(), DETAIL_FRAGMENT_TAG)
                         .commit();
             }
-            getSupportActionBar().setElevation(3f);
         } else {
             mTwoPane = false;
-            getSupportActionBar().setElevation(0f);
         }
-
-
-
+        MovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
