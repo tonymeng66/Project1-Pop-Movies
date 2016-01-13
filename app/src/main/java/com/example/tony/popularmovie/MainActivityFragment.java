@@ -17,17 +17,13 @@
 package com.example.tony.popularmovie;
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,11 +33,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import com.example.tony.popularmovie.data.MovieContract;
 import com.example.tony.popularmovie.sync.MovieSyncAdapter;
-import com.squareup.picasso.Target;
 
 /**
  * Populate the main page with an GridView which is filled by movie posters.
@@ -115,7 +109,7 @@ import com.squareup.picasso.Target;
     @Override
     public void onResume() {
 
-        //MovieSyncAdapter.syncImmediately(getActivity());
+        MovieSyncAdapter.syncImmediately(getActivity());
 
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         String sortBy = settings.getString(PREFS_NAME,"popularity.desc");

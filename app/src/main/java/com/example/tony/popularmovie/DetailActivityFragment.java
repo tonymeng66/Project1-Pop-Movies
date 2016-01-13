@@ -171,7 +171,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onResume() {
         getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         getLoaderManager().restartLoader(TRAILER_LOADER, null, this);
-        setHasOptionsMenu(true);
         super.onResume();
     }
 
